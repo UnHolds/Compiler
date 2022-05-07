@@ -1,0 +1,8 @@
+f(x,y)
+return not - - not not $10;
+return 10 + 10 + 12;
+return 10 * 10 * 12;
+return 10 and 10 and 12;
+return 10 > 12;
+return 10 = 12;
+end;

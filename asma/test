@@ -1,0 +1,48 @@
+#! /bin/bash
+
+OBJ=./asma.o
+LOC=.
+DIR=.
+
+
+echo 'Testing "make clean"'
+make clean
+echo
+echo 'Testing "make"'
+make
+if [ ! -f $OBJ ]
+then
+    echo "Object $OBJ not found."
+    exit 1
+fi
+
+MAIN=$LOC/main.c
+if test -f $DIR/main.c; then
+  MAIN=$DIR/main.c
+fi
+echo "Linke mit (u.a.) $MAIN"
+# Linke min8bytes.o 
+gcc -O -o test_asma $OBJ $LOC/callingconvention.o $MAIN 2>&1
+
+if [ ! -x test_asma ]; then
+  echo "Object $OBJ cannot be linked."
+  exit 1
+fi
+
+./test_asma
+retval=$?
+if [ "$retval" -ge 12 ] && [ "$retval" -le 15 ]; then
+    echo "Error: Callee-saved register %r$retval modified."
+elif [ "$retval" -eq 11 ]; then
+    echo "Error: Callee-saved register %rbx modified."
+elif [ "$retval" -eq 16 ]; then
+    echo "Error: Callee-saved register %rbp modified."
+elif [ "$retval" -eq 30 ]; then
+    echo "Error: Stack pointer %rsp modified."
+elif test $retval -eq 0
+        then
+    echo "No error found."
+fi
+
+# delete executeable and core file
+#rm -rf test_asma core

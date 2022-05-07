@@ -1,0 +1,12 @@
+f(a,b,z)
+test:
+test1:
+return 5;
+test3:
+test4:
+goto test4;
+var s = 4;
+var ss = 5;
+var zz = s + ss;
+5;
+end;

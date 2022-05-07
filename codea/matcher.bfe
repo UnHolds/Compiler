@@ -1,0 +1,27 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+#include "tree.h"
+
+
+
+%}
+
+%start inot
+%term NIL=0
+%%
+
+
+
+%%
+
+extern treenode *root;
+extern int yyparse(void);
+void burm_reduce(NODEPTR_TYPE bnode, int goalnt);
+
+void invoke_burm(NODEPTR_TYPE root) {
+	burm_label(root);
+	burm_reduce(root, 1);
+}
