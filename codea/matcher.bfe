@@ -9,8 +9,8 @@
 
 %}
 
-%start inot
 %term NIL=0
+%start test
 %%
 
 
@@ -20,6 +20,7 @@
 extern treenode *root;
 extern int yyparse(void);
 void burm_reduce(NODEPTR_TYPE bnode, int goalnt);
+STATEPTR_TYPE burm_label(NODEPTR_TYPE p); //TODO check if this works
 
 void invoke_burm(NODEPTR_TYPE root) {
 	burm_label(root);
