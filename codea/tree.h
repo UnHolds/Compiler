@@ -2,6 +2,13 @@
 #define TREE_H
 
 
+#define INIT 0
+#define FUNCTION 1
+#define LABEL 2
+#define FUNCTION_END 3
+
+
+
 
 #ifdef USE_IBURG
 #ifndef BURM

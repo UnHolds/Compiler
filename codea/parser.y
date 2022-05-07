@@ -70,18 +70,27 @@ extern void invoke_burm(NODEPTR_TYPE root);
 %%
 
 program: /* nothing */
-        | program def T_SEMICOLON
+    @{
+        @codegen invoke_burm(newOperatorNode(INIT, NULL, NULL));
+    @}
+    | program def T_SEMICOLON
 ;
 
-def:    T_ID T_ROUND_BRACKET_OPENED pars T_ROUND_BRACKET_CLOSED stats T_END
+def:    T_ID T_ROUND_BRACKET_OPENED pars T_ROUND_BRACKET_CLOSED stats end
     @{
         @i @stats.i_labels@ = @stats.s_labels@;
 
         @i @stats.i_variables@ = @pars.s_variables@;
 
         @LRpost variable_label_conflict_exits(join_lists(@stats.s_variables@, @pars.s_variables@), @stats.s_labels@);
+
+        @codegen {
+            treenode* t = newOperatorNode(FUNCTION, NULL, NULL);
+            invoke_burm(t);
+        }
+
     @}
-    |   T_ID T_CURLY_BRACKET_OPENED pars T_CURLY_BRACKET_CLOSED T_ROUND_BRACKET_OPENED pars T_ROUND_BRACKET_CLOSED stats T_END
+    |   T_ID T_CURLY_BRACKET_OPENED pars T_CURLY_BRACKET_CLOSED T_ROUND_BRACKET_OPENED pars T_ROUND_BRACKET_CLOSED stats end
     @{
         @i @stats.i_labels@ = new_string_list();
 
@@ -89,6 +98,20 @@ def:    T_ID T_ROUND_BRACKET_OPENED pars T_ROUND_BRACKET_CLOSED stats T_END
 
         @LRpost find_variable_duplicates(@stats.i_variables@);
         @LRpost variable_label_conflict_exits(join_lists(@stats.s_variables@, @pars.s_variables@), @stats.s_labels@);
+
+        @codegen {
+            treenode* t = newOperatorNode(FUNCTION, NULL, NULL);
+            invoke_burm(t);
+        }
+    @}
+;
+
+end: T_END
+    @{
+        @codegen {
+            treenode* t = newOperatorNode(FUNCTION_END, NULL, NULL);
+            invoke_burm(t);
+        }
     @}
 ;
 
@@ -132,6 +155,11 @@ labeldef: /* nothing */
     | labeldef T_ID T_COLON
     @{
         @i @labeldef.0.s_labels@ = add_string(@T_ID.str@, @labeldef.1.s_labels@);
+
+        @codegen {
+            treenode* t = newOperatorNode(LABEL, NULL, NULL);
+            invoke_burm(t);
+        }
     @}
 ;
 

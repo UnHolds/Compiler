@@ -32,7 +32,7 @@ lex.yy.o: lex.yy.c
 	gcc -c lex.yy.c
 
 codea: oxout.tab.o lex.yy.o matcher.o list.o treeOperators.o
-	gcc -o codea oxout.tab.o lex.yy.o list.o matcher.o -ly -ll -lfl
+	gcc -o codea oxout.tab.o lex.yy.o list.o matcher.o treeOperators.o -ly -ll -lfl
 
 clean:
 	rm -rf oxout.* lex.yy.* codea matcher.c matcher.brg *.o
