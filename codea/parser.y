@@ -59,8 +59,9 @@ extern void invoke_burm(NODEPTR_TYPE root);
 @attributes {struct list * s_labels; struct list * i_labels; struct list * i_variables; struct list * s_variables;} stats
 @attributes {struct list * i_labels; struct list * i_variables; struct list * s_variables;} stat
 @attributes {struct list * s_variables;} pars
-@attributes {struct list * i_variables;} expr lexpr expr_plus expr_times expr_and multi_expr
-@attributes {struct list * i_variables;} term
+@attributes {struct list * i_variables;} expr  expr_plus expr_times expr_and multi_expr term lexpr
+// @attributes {struct list * i_variables; treenode * node;}
+
 
 @traversal @preorder codegen
 @traversal LRpost
@@ -173,6 +174,11 @@ stat: T_RETURN expr
         @LRpost label_exists(@T_ID.str@, @stat.i_labels@);
 
         @i @stat.s_variables@ = new_string_list();
+
+        @codegen {
+            treenode* t = newOperatorNode(GOTO, NULL, NULL);
+            invoke_burm(t);
+        }
     @}
     | T_IF expr T_GOTO T_ID
     @{

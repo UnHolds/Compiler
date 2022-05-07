@@ -6,6 +6,10 @@
 #define FUNCTION 1
 #define LABEL 2
 #define FUNCTION_END 3
+#define GOTO 4
+#define VARIABLE 5
+#define NUMBER 6
+#define REGISTER 7
 
 
 

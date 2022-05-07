@@ -17,14 +17,21 @@ treenode *newOperatorNode(int op, treenode *left, treenode *right)
 
 treenode *newRegisterNode(char* regname)
 {
-  treenode *newNode = newOperatorNode(0,NULL,NULL);
+  treenode *newNode = newOperatorNode(REGISTER,NULL,NULL);
   newNode->regname = regname;
   return newNode;
 }
 
 treenode *newNumberNode(long num)
 {
-  treenode *newNode = newOperatorNode(1,NULL,NULL);
+  treenode *newNode = newOperatorNode(NUMBER,NULL,NULL);
   newNode->val = num;
+  return newNode;
+}
+
+treenode *newVariableNode(char* str)
+{
+  treenode *newNode = newOperatorNode(VARIABLE,NULL,NULL);
+  newNode->str = str;
   return newNode;
 }

@@ -9,7 +9,7 @@
 
 %}
 
-%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3
+%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4
 %start start
 %%
 
@@ -17,6 +17,7 @@ start: INIT			# 1 # {printf("init\n");}
 start: FUNCTION		# 1 # {printf("function\n");}
 start: LABEL		# 1 # {printf("label\n");}
 start: FUNCTION_END	# 1 # {printf("function ende\n");}
+start: GOTO			# 1 # {printf("goto\n");}
 %%
 
 extern treenode *root;
