@@ -10,8 +10,13 @@
 #define VARIABLE 5
 #define NUMBER 6
 #define REGISTER 7
-
-
+#define NOT 8
+#define MINUS 9
+#define PLUS 10
+#define TIMES 11
+#define AND 12
+#define GREATER 13
+#define EQUAL 14
 
 
 #ifdef USE_IBURG

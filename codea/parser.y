@@ -60,8 +60,8 @@ extern void invoke_burm(NODEPTR_TYPE root);
 @attributes {struct list * s_labels; struct list * i_labels; struct list * i_variables; struct list * s_variables;} stats
 @attributes {struct list * i_labels; struct list * i_variables; struct list * s_variables;} stat
 @attributes {struct list * s_variables;} pars
-@attributes {struct list * i_variables;} expr  expr_plus expr_times expr_and multi_expr lexpr
-@attributes {struct list * i_variables; struct s_node *node;} term
+@attributes {struct list * i_variables;}  expr_plus expr_times expr_and multi_expr lexpr
+@attributes {struct list * i_variables; struct s_node *node;} term expr
 
 
 @traversal @preorder codegen
@@ -261,43 +261,47 @@ expr_and: term
 expr: term
     @{
         @i @term.i_variables@ = @expr.i_variables@;
-
-        @codegen{
-            printf("expr to term\n");
-        }
+        @i @expr.node@ = @term.node@;
     @}
     | T_NOT expr
     @{
         @i @expr.1.i_variables@ = @expr.0.i_variables@;
+        @i @expr.0.node@ = newOperatorNode(NOT, @expr.1.node@, NULL);
     @}
     | T_MINUS expr
     @{
         @i @expr.1.i_variables@ = @expr.0.i_variables@;
+        @i @expr.0.node@ = newOperatorNode(MINUS, @expr.1.node@, NULL);
     @}
     | expr_plus T_PLUS term
     @{
         @i @expr_plus.i_variables@ = @expr.i_variables@;
         @i @term.i_variables@ = @expr.i_variables@;
+        @i @expr.node@ = newOperatorNode(PLUS, NULL, @term.node@); //TODO add expr_plus node
     @}
     | expr_times T_TIMES term
     @{
         @i @expr_times.i_variables@ = @expr.i_variables@;
         @i @term.i_variables@ = @expr.i_variables@;
+        @i @expr.node@ = newOperatorNode(TIMES, NULL, @term.node@); //TODO add expr_times node
     @}
     | expr_and T_AND term
     @{
         @i @expr_and.i_variables@ = @expr.i_variables@;
         @i @term.i_variables@ = @expr.i_variables@;
+        @i @expr.node@ = newOperatorNode(AND, NULL, @term.node@); //TODO add expr_and node
     @}
     | term T_GREATER term
     @{
         @i @term.0.i_variables@ = @expr.i_variables@;
         @i @term.1.i_variables@ = @expr.i_variables@;
+        @i @expr.node@ = newOperatorNode(GREATER, @term.0.node@, @term.1.node@);
     @}
     | term T_EQUAL term
     @{
         @i @term.0.i_variables@ = @expr.i_variables@;
         @i @term.1.i_variables@ = @expr.i_variables@;
+        @i @expr.node@ = newOperatorNode(EQUAL, @term.0.node@, @term.1.node@);
     @}
 ;
 
