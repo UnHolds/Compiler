@@ -21,7 +21,7 @@ extern void invoke_burm(NODEPTR_TYPE root);
 %}
 
 %union {
-    int num;
+    long num;
     char* str;
 }
 
@@ -55,12 +55,13 @@ extern void invoke_burm(NODEPTR_TYPE root);
 
 
 @attributes {char * str;} T_ID
+@attributes {long num;} T_NUM
 @attributes {struct list * s_labels;} labeldef
 @attributes {struct list * s_labels; struct list * i_labels; struct list * i_variables; struct list * s_variables;} stats
 @attributes {struct list * i_labels; struct list * i_variables; struct list * s_variables;} stat
 @attributes {struct list * s_variables;} pars
-@attributes {struct list * i_variables;} expr  expr_plus expr_times expr_and multi_expr term lexpr
-// @attributes {struct list * i_variables; treenode * node;}
+@attributes {struct list * i_variables;} expr  expr_plus expr_times expr_and multi_expr lexpr
+@attributes {struct list * i_variables; struct s_node *node;} term
 
 
 @traversal @preorder codegen
@@ -168,6 +169,10 @@ stat: T_RETURN expr
     @{
         @i @stat.s_variables@ = new_string_list();
         @i @expr.i_variables@ = @stat.i_variables@;
+
+        @codegen {
+            printf("return with expr\n");
+        }
     @}
     | T_GOTO T_ID
     @{
@@ -256,6 +261,10 @@ expr_and: term
 expr: term
     @{
         @i @term.i_variables@ = @expr.i_variables@;
+
+        @codegen{
+            printf("expr to term\n");
+        }
     @}
     | T_NOT expr
     @{
@@ -306,27 +315,38 @@ multi_expr: expr
 term: T_ROUND_BRACKET_OPENED expr T_ROUND_BRACKET_CLOSED
     @{
         @i @expr.i_variables@ = @term.i_variables@;
+        @i @term.node@ = newOperatorNode(0, NULL, NULL); //TODO get the tree from term
     @}
     | T_NUM
+    @{
+        @i @term.node@ = newNumberNode(@T_NUM.num@); //create new number node
+    @}
     | term T_SQUARE_BRACKET_OPENED expr T_SQUARE_BRACKET_CLOSED
     @{
         @i @term.1.i_variables@ = @term.0.i_variables@;
         @i @expr.i_variables@ = @term.0.i_variables@;
+
+        @i @term.node@ = newOperatorNode(0, NULL, NULL); //TODO get the num from the expr and make an array access
     @}
     | T_ID
     @{
+        @i @term.node@ = newVariableNode(@T_ID.str@); //create a new variable node
+
         @LRpost variable_exists(@T_ID.str@, @term.i_variables@);
     @}
-    | T_ID T_ROUND_BRACKET_OPENED multi_expr T_ROUND_BRACKET_CLOSED
+    | T_ID T_ROUND_BRACKET_OPENED multi_expr T_ROUND_BRACKET_CLOSED //function call
     @{
+        @i @term.node@ = newOperatorNode(0, NULL, NULL); //PLACEHOLDER change in codeB
         @i @multi_expr.i_variables@ = @term.i_variables@;
     @}
-    | T_ID T_CURLY_BRACKET_OPENED multi_expr T_CURLY_BRACKET_CLOSED
+    | T_ID T_CURLY_BRACKET_OPENED multi_expr T_CURLY_BRACKET_CLOSED //stufe 1
     @{
+        @i @term.node@ = newOperatorNode(0, NULL, NULL); //PLACEHOLDER change in codeB
         @i @multi_expr.i_variables@ = @term.i_variables@;
     @}
-    | term T_AT T_ROUND_BRACKET_OPENED multi_expr T_ROUND_BRACKET_CLOSED
+    | term T_AT T_ROUND_BRACKET_OPENED multi_expr T_ROUND_BRACKET_CLOSED //stufe 2
     @{
+        @i @term.node@ = newOperatorNode(0, NULL, NULL); //PLACEHOLDER change in codeB
         @i @term.1.i_variables@ = @term.0.i_variables@;
         @i @multi_expr.i_variables@ = @term.0.i_variables@;
     @}

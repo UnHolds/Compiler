@@ -42,11 +42,13 @@ and return T_AND;
 {DIGIT}+        {
                         yylval.num = atoi( yytext );
                         return T_NUM;
+                        @{@T_NUM.num@ = yylval.num;@}
                 }
 
 {HEX}   {
                 yylval.num = (int)strtol(yytext + 1, NULL, 16);
                 return T_NUM;
+                @{@T_NUM.num@ = yylval.num;@}
         }
 
 {ID}    {

@@ -9,6 +9,6 @@
 treenode *newOperatorNode(int op, treenode *left, treenode *right);
 treenode *newRegisterNode(char* name);
 treenode *newNumberNode(long num);
-
+treenode *newVariableNode(char* str);
 
 #endif
