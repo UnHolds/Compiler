@@ -60,8 +60,8 @@ extern void invoke_burm(NODEPTR_TYPE root);
 @attributes {struct list * s_labels; struct list * i_labels; struct list * i_variables; struct list * s_variables;} stats
 @attributes {struct list * i_labels; struct list * i_variables; struct list * s_variables;} stat
 @attributes {struct list * s_variables;} pars
-@attributes {struct list * i_variables;} multi_expr lexpr
-@attributes {struct list * i_variables; struct s_node *node;} term expr expr_plus expr_times expr_and
+@attributes {struct list * i_variables;} multi_expr
+@attributes {struct list * i_variables; struct s_node *node;} term expr expr_plus expr_times expr_and lexpr
 
 
 @traversal @preorder codegen
@@ -238,11 +238,15 @@ stat: T_RETURN expr
 lexpr: T_ID
     @{
         @LRpost variable_exists(@T_ID.str@, @lexpr.i_variables@);
+
+        @i @lexpr.node@ = newVariableNode(@T_ID.str@);
     @}
     | term T_SQUARE_BRACKET_OPENED expr T_SQUARE_BRACKET_CLOSED
     @{
         @i @term.i_variables@ = @lexpr.i_variables@;
         @i @expr.i_variables@ = @lexpr.i_variables@;
+
+        @i @lexpr.node@ = newOperatorNode(ARRAY_ASSIGN, @term.node@, @expr.node@);
     @}
 ;
 
