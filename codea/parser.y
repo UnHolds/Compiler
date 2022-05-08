@@ -60,8 +60,8 @@ extern void invoke_burm(NODEPTR_TYPE root);
 @attributes {struct list * s_labels; struct list * i_labels; struct list * i_variables; struct list * s_variables;} stats
 @attributes {struct list * i_labels; struct list * i_variables; struct list * s_variables;} stat
 @attributes {struct list * s_variables;} pars
-@attributes {struct list * i_variables;}  expr_plus expr_times expr_and multi_expr lexpr
-@attributes {struct list * i_variables; struct s_node *node;} term expr
+@attributes {struct list * i_variables;} multi_expr lexpr
+@attributes {struct list * i_variables; struct s_node *node;} term expr expr_plus expr_times expr_and
 
 
 @traversal @preorder codegen
@@ -219,7 +219,7 @@ stat: T_RETURN expr
         @i @expr.i_variables@ = @stat.i_variables@;
 
         @codegen {
-            treenode* t = newOperatorNode(VARIABLE_ASSIGNMENT, @expr.node@, NULL); //TODO check this (var name needed)
+            treenode* t = newOperatorNode(VARIABLE_ASSIGNMENT, NULL, @expr.node@); //TODO check this (var name needed)
             invoke_burm(t);
         }
     @}
@@ -249,33 +249,39 @@ lexpr: T_ID
 expr_plus: term
     @{
         @i @term.i_variables@ = @expr_plus.i_variables@;
+        @i @expr_plus.node@ = @term.node@;
     @}
     | expr_plus T_PLUS term
     @{
         @i @expr_plus.1.i_variables@ = @expr_plus.0.i_variables@;
         @i @term.i_variables@ = @expr_plus.0.i_variables@;
+        @i @expr_plus.0.node@ = newOperatorNode(PLUS, @expr_plus.1.node@, @term.node@);
     @}
 ;
 
 expr_times: term
     @{
         @i @term.i_variables@ = @expr_times.i_variables@;
+        @i @expr_times.node@ = @term.node@;
     @}
     | expr_times T_TIMES term
     @{
         @i  @expr_times.1.i_variables@ = @expr_times.0.i_variables@;
         @i @term.i_variables@ = @expr_times.0.i_variables@;
+        @i @expr_times.0.node@ = newOperatorNode(TIMES, @expr_times.1.node@, @term.node@);
     @}
 ;
 
 expr_and: term
     @{
         @i @term.i_variables@ = @expr_and.i_variables@;
+        @i @expr_and.node@ = @term.node@;
     @}
     | expr_and T_AND term
     @{
         @i @expr_and.1.i_variables@ = @expr_and.0.i_variables@;
         @i @term.i_variables@ = @expr_and.0.i_variables@;
+        @i @expr_and.0.node@ = newOperatorNode(TIMES, @expr_and.1.node@, @term.node@);
     @}
 ;
 
@@ -298,19 +304,19 @@ expr: term
     @{
         @i @expr_plus.i_variables@ = @expr.i_variables@;
         @i @term.i_variables@ = @expr.i_variables@;
-        @i @expr.node@ = newOperatorNode(PLUS, NULL, @term.node@); //TODO add expr_plus node
+        @i @expr.node@ = newOperatorNode(PLUS, @expr_plus.node@, @term.node@);
     @}
     | expr_times T_TIMES term
     @{
         @i @expr_times.i_variables@ = @expr.i_variables@;
         @i @term.i_variables@ = @expr.i_variables@;
-        @i @expr.node@ = newOperatorNode(TIMES, NULL, @term.node@); //TODO add expr_times node
+        @i @expr.node@ = newOperatorNode(TIMES, @expr_times.node@, @term.node@);
     @}
     | expr_and T_AND term
     @{
         @i @expr_and.i_variables@ = @expr.i_variables@;
         @i @term.i_variables@ = @expr.i_variables@;
-        @i @expr.node@ = newOperatorNode(AND, NULL, @term.node@); //TODO add expr_and node
+        @i @expr.node@ = newOperatorNode(AND,  @expr_and.node@, @term.node@);
     @}
     | term T_GREATER term
     @{
