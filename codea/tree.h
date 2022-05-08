@@ -40,7 +40,7 @@ typedef struct s_node {
         /* user defined data fields follow here */
 	char* regname;
     int regNum;
-	long val;
+	long num;
     char* str;
 } treenode;
 

@@ -13,11 +13,11 @@
 
 start: INIT									# 1 # {printf("init\n");}
 start: FUNCTION								# 1 # {printf("function\n");}
-start: LABEL								# 1 # {printf("label\n");}
+start: LABEL								# 1 # {printf("label %s\n", bnode->str);}
 start: FUNCTION_END							# 1 # {printf("function ende\n");}
-start: GOTO									# 1 # {printf("goto\n");}
-start: VARIABLE								# 1 # {printf("variable\n");}
-start: NUMBER								# 1 # {printf("number\n");}
+start: GOTO									# 1 # {printf("goto %s\n", bnode->str);}
+start: VARIABLE								# 1 # {printf("variable %s\n", bnode->str);}
+start: NUMBER								# 1 # {printf("number %d\n", bnode->num);}
 start: REGISTER								# 1 # {printf("register\n");}
 start: NOT(start)							# 1 # {printf("not\n");}
 start: MINUS(start)							# 1 # {printf("minus\n");}
@@ -28,7 +28,7 @@ start: GREATER(start, start)				# 1 # {printf("greater\n");}
 start: EQUAL(start, start)					# 1 # {printf("equal\n");}
 start: RETURN(start)						# 1 # {printf("return\n");}
 start: VARIABLE_ASSIGNMENT(start, start)	# 1 # {printf("variable assignment\n");}
-start: VARIABLE_DEFINITION(start)			# 1 # {printf("variable definition\n");}
+start: VARIABLE_DEFINITION(start)			# 1 # {printf("variable definition %s\n", bnode->str);}
 start: TERM_EXECUTION(start)				# 1 # {printf("term execution\n");}
 start: ARRAY_ASSIGN(start, start)			# 1 # {printf("array asign\n");}
 start: IF(start)	 						# 1 # {printf("if goto\n");}

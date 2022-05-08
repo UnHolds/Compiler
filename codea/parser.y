@@ -160,6 +160,7 @@ labeldef: /* nothing */
 
         @codegen {
             treenode* t = newOperatorNode(LABEL, NULL, NULL);
+            t->str = @T_ID.str@;
             invoke_burm(t);
         }
     @}
@@ -183,6 +184,7 @@ stat: T_RETURN expr
 
         @codegen {
             treenode* t = newOperatorNode(GOTO, NULL, NULL);
+            t->str = @T_ID.str@;
             invoke_burm(t);
         }
     @}
@@ -209,6 +211,7 @@ stat: T_RETURN expr
 
         @codegen {
             treenode* t = newOperatorNode(VARIABLE_DEFINITION, @expr.node@, NULL);
+            t->str = @T_ID.str@;
             invoke_burm(t);
         }
     @}
