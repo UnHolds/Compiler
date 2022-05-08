@@ -285,7 +285,7 @@ expr_and: term
     @{
         @i @expr_and.1.i_variables@ = @expr_and.0.i_variables@;
         @i @term.i_variables@ = @expr_and.0.i_variables@;
-        @i @expr_and.0.node@ = newOperatorNode(TIMES, @expr_and.1.node@, @term.node@);
+        @i @expr_and.0.node@ = newOperatorNode(AND, @expr_and.1.node@, @term.node@);
     @}
 ;
 

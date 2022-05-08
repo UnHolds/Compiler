@@ -11,27 +11,28 @@
 %start start
 %%
 
-start: INIT							# 1 # {printf("init\n");}
-start: FUNCTION						# 1 # {printf("function\n");}
-start: LABEL						# 1 # {printf("label\n");}
-start: FUNCTION_END					# 1 # {printf("function ende\n");}
-start: GOTO							# 1 # {printf("goto\n");}
-start: VARIABLE						# 1 # {printf("new variable\n");}
-start: NUMBER						# 1 # {printf("new number\n");}
-start: REGISTER						# 1 # {printf("new register\n");}
-start: NOT							# 1 # {printf("not\n");}
-start: MINUS						# 1 # {printf("minus\n");}
-start: PLUS							# 1 # {printf("plus\n");}
-start: AND							# 1 # {printf("and\n");}
-start: GREATER						# 1 # {printf("greater\n");}
-start: EQUAL						# 1 # {printf("equal\n");}
-start: RETURN						# 1 # {printf("return\n");}
-start: VARIABLE_ASSIGNMENT 			# 1 # {printf("variable assignment\n");}
-start: VARIABLE_DEFINITION		 	# 1 # {printf("variable definition\n");}
-start: TERM_EXECUTION 				# 1 # {printf("term execution\n");}
-start: ARRAY_ASSIGN 				# 1 # {printf("array asign\n");}
-start: IF			 				# 1 # {printf("if goto\n");}
-start: ARRAY_ACCESS			 		# 1 # {printf("array access\n");}
+start: INIT									# 1 # {printf("init\n");}
+start: FUNCTION								# 1 # {printf("function\n");}
+start: LABEL								# 1 # {printf("label\n");}
+start: FUNCTION_END							# 1 # {printf("function ende\n");}
+start: GOTO									# 1 # {printf("goto\n");}
+start: VARIABLE								# 1 # {printf("variable\n");}
+start: NUMBER								# 1 # {printf("number\n");}
+start: REGISTER								# 1 # {printf("register\n");}
+start: NOT(start)							# 1 # {printf("not\n");}
+start: MINUS(start)							# 1 # {printf("minus\n");}
+start: PLUS(start, start)					# 1 # {printf("plus\n");}
+start: TIMES(start, start)					# 1 # {printf("times\n");}
+start: AND(start, start)					# 1 # {printf("and\n");}
+start: GREATER(start, start)				# 1 # {printf("greater\n");}
+start: EQUAL(start, start)					# 1 # {printf("equal\n");}
+start: RETURN(start)						# 1 # {printf("return\n");}
+start: VARIABLE_ASSIGNMENT(start, start)	# 1 # {printf("variable assignment\n");}
+start: VARIABLE_DEFINITION(start)			# 1 # {printf("variable definition\n");}
+start: TERM_EXECUTION(start)				# 1 # {printf("term execution\n");}
+start: ARRAY_ASSIGN(start, start)			# 1 # {printf("array asign\n");}
+start: IF(start)	 						# 1 # {printf("if goto\n");}
+start: ARRAY_ACCESS(start, start)			# 1 # {printf("array access\n");}
 %%
 
 extern treenode *root;
