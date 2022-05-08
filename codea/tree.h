@@ -22,7 +22,8 @@
 #define VARIABLE_DEFINITION 17
 #define TERM_EXECUTION 18
 #define ARRAY_ASSIGN 19
-
+#define IF 20
+#define ARRAY_ACCESS 21
 
 #ifdef USE_IBURG
 #ifndef BURM

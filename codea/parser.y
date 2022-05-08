@@ -194,7 +194,7 @@ stat: T_RETURN expr
         @i @expr.i_variables@ = @stat.i_variables@;
 
         @codegen {
-            treenode* t = newOperatorNode(0, NULL, NULL); //TODO check this
+            treenode* t = newOperatorNode(IF, @expr.node@, NULL);
             invoke_burm(t);
         }
     @}
@@ -208,7 +208,7 @@ stat: T_RETURN expr
         @LRpost find_variable_duplicates2(@T_ID.str@, @stat.i_variables@);
 
         @codegen {
-            treenode* t = newOperatorNode(VARIABLE_DEFINITION, @expr.node@, NULL); //TODO check this (var name needed)
+            treenode* t = newOperatorNode(VARIABLE_DEFINITION, @expr.node@, NULL);
             invoke_burm(t);
         }
     @}
@@ -219,7 +219,7 @@ stat: T_RETURN expr
         @i @expr.i_variables@ = @stat.i_variables@;
 
         @codegen {
-            treenode* t = newOperatorNode(VARIABLE_ASSIGNMENT, NULL, @expr.node@); //TODO check this (var name needed)
+            treenode* t = newOperatorNode(VARIABLE_ASSIGNMENT, @lexpr.node@, @expr.node@);
             invoke_burm(t);
         }
     @}
@@ -229,7 +229,7 @@ stat: T_RETURN expr
         @i @term.i_variables@ = @stat.i_variables@;
 
         @codegen {
-            treenode* t = newOperatorNode(TERM_EXECUTION, @term.node@, NULL); //TODO check this (var name needed)
+            treenode* t = newOperatorNode(TERM_EXECUTION, @term.node@, NULL);
             invoke_burm(t);
         }
     @}
@@ -350,7 +350,7 @@ multi_expr: expr
 term: T_ROUND_BRACKET_OPENED expr T_ROUND_BRACKET_CLOSED
     @{
         @i @expr.i_variables@ = @term.i_variables@;
-        @i @term.node@ = newOperatorNode(0, NULL, NULL); //TODO get the tree from term
+        @i @term.node@ = @expr.node@; //FIXME ???
     @}
     | T_NUM
     @{
@@ -361,7 +361,7 @@ term: T_ROUND_BRACKET_OPENED expr T_ROUND_BRACKET_CLOSED
         @i @term.1.i_variables@ = @term.0.i_variables@;
         @i @expr.i_variables@ = @term.0.i_variables@;
 
-        @i @term.node@ = newOperatorNode(0, NULL, NULL); //TODO get the num from the expr and make an array access
+        @i @term.0.node@ = newOperatorNode(ARRAY_ACCESS, @term.1.node@, @expr.node@);
     @}
     | T_ID
     @{
