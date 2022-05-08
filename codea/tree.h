@@ -17,6 +17,10 @@
 #define AND 12
 #define GREATER 13
 #define EQUAL 14
+#define RETURN 15
+#define VARIABLE_ASSIGNMENT 16
+#define VARIABLE_DEFINITION 17
+#define TERM_EXECUTION 18
 
 
 #ifdef USE_IBURG

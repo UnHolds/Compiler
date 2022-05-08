@@ -171,7 +171,8 @@ stat: T_RETURN expr
         @i @expr.i_variables@ = @stat.i_variables@;
 
         @codegen {
-            printf("return with expr\n");
+            treenode* t = newOperatorNode(RETURN, @expr.node@, NULL);
+            invoke_burm(t);
         }
     @}
     | T_GOTO T_ID
@@ -191,6 +192,11 @@ stat: T_RETURN expr
 
         @i @stat.s_variables@ = new_string_list();
         @i @expr.i_variables@ = @stat.i_variables@;
+
+        @codegen {
+            treenode* t = newOperatorNode(0, NULL, NULL); //TODO check this
+            invoke_burm(t);
+        }
     @}
     | T_VAR T_ID T_EQUAL expr
     @{
@@ -200,17 +206,32 @@ stat: T_RETURN expr
 
         //check if var exists
         @LRpost find_variable_duplicates2(@T_ID.str@, @stat.i_variables@);
+
+        @codegen {
+            treenode* t = newOperatorNode(VARIABLE_DEFINITION, @expr.node@, NULL); //TODO check this (var name needed)
+            invoke_burm(t);
+        }
     @}
     | lexpr T_EQUAL expr
     @{
         @i @stat.s_variables@ = new_string_list();
         @i  @lexpr.i_variables@ = @stat.i_variables@;
         @i @expr.i_variables@ = @stat.i_variables@;
+
+        @codegen {
+            treenode* t = newOperatorNode(VARIABLE_ASSIGNMENT, @expr.node@, NULL); //TODO check this (var name needed)
+            invoke_burm(t);
+        }
     @}
     | term
     @{
         @i @stat.s_variables@ = new_string_list();
         @i @term.i_variables@ = @stat.i_variables@;
+
+        @codegen {
+            treenode* t = newOperatorNode(TERM_EXECUTION, @term.node@, NULL); //TODO check this (var name needed)
+            invoke_burm(t);
+        }
     @}
 ;
 

@@ -7,25 +7,28 @@
 
 %}
 
-%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14
+%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18
 %start start
 %%
 
-start: INIT			# 1 # {printf("init\n");}
-start: FUNCTION		# 1 # {printf("function\n");}
-start: LABEL		# 1 # {printf("label\n");}
-start: FUNCTION_END	# 1 # {printf("function ende\n");}
-start: GOTO			# 1 # {printf("goto\n");}
-start: VARIABLE		# 1 # {printf("new variable\n");}
-start: NUMBER		# 1 # {printf("new number\n");}
-start: REGISTER		# 1 # {printf("new register\n");}
-start: NOT			# 1 # {printf("not\n");}
-start: MINUS		# 1 # {printf("minus\n");}
-start: PLUS			# 1 # {printf("plus\n");}
-start: AND			# 1 # {printf("and\n");}
-start: GREATER		# 1 # {printf("greater\n");}
-start: EQUAL		# 1 # {printf("equal\n");}
-
+start: INIT							# 1 # {printf("init\n");}
+start: FUNCTION						# 1 # {printf("function\n");}
+start: LABEL						# 1 # {printf("label\n");}
+start: FUNCTION_END					# 1 # {printf("function ende\n");}
+start: GOTO							# 1 # {printf("goto\n");}
+start: VARIABLE						# 1 # {printf("new variable\n");}
+start: NUMBER						# 1 # {printf("new number\n");}
+start: REGISTER						# 1 # {printf("new register\n");}
+start: NOT							# 1 # {printf("not\n");}
+start: MINUS						# 1 # {printf("minus\n");}
+start: PLUS							# 1 # {printf("plus\n");}
+start: AND							# 1 # {printf("and\n");}
+start: GREATER						# 1 # {printf("greater\n");}
+start: EQUAL						# 1 # {printf("equal\n");}
+start: RETURN						# 1 # {printf("return\n");}
+start: VARIABLE_ASSIGNMENT 			# 1 # {printf("variable assignment\n");}
+start: VARIABLE_DEFINITION		 	# 1 # {printf("variable definition\n");}
+start: TERM_EXECUTION 				# 1 # {printf("term execution\n");}
 %%
 
 extern treenode *root;
