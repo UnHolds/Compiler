@@ -29,6 +29,19 @@ void mathOP1(NODEPTR_TYPE bnode, char * type){
 	freeRegisterIfNotVariable(bnode->kids[0]->regName);
 }
 
+void logicOP2(NODEPTR_TYPE bnode, char * type){
+
+	printf("\txor %%rax, %%rax\n");
+	printf("\tcmp %s, %s\n", bnode->kids[0]->regName, bnode->kids[1]->regName);
+	freeRegisterIfNotVariable(bnode->kids[0]->regName);
+	freeRegisterIfNotVariable(bnode->kids[1]->regName);
+
+	printf("\t%s %%al\n", type);
+
+	bnode->regName = getRegister();
+	printf("\tmov %%rax, %s\n",  bnode->regName);
+}
+
 %}
 
 %term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22
@@ -49,7 +62,7 @@ start: PLUS(start, start)							# 1 # {mathOP2(bnode, "add", 0);}
 start: TIMES(start, start)							# 1 # {mathOP2(bnode, "imul", 1);}
 start: AND(start, start)							# 1 # {mathOP2(bnode, "and", 0xFFFFFFFFFFFFFFFF);}
 start: GREATER(start, start)						# 1 # {printf("TODO greater\n");}
-start: EQUAL(start, start)							# 1 # {printf("TODO equal\n");}
+start: EQUAL(start, start)							# 1 # {logicOP2(bnode, "sete");} //SETE = set if equal
 start: RETURN(start)								# 1 # {printf("\tmov %s, \%rax\n\tret\n", bnode->kids[0]->regName);}
 start: VARIABLE_ASSIGNMENT(assignVariable, start)	# 1 # {printf("\tmov %s, %s\n", bnode->kids[1]->regName, bnode->kids[0]->regName); freeRegisterIfNotVariable(bnode->kids[1]->regName);}
 start: VARIABLE_ASSIGNMENT(assignArray, start)		# 1 # {printf("TODO variable array assignment\n");}
