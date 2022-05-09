@@ -2,8 +2,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdbool.h>
+#include <string.h>
 
 #include "tree.h"
+
+long functionNum = 0;
+char* currentFunctionName = NULL;
+
+typedef struct Register {
+    char* names[12];
+    bool free[12];
+} Register;
+
+Register registers = {
+	.names = {"\%rdi", "\%rsi", "\%rdx", "\%rcx", "\%r8", "\%r9", "\%r10", "\%r11", "\%r12", "\%r13", "\%r14", "\%r15"},
+	.free = {true, true, true, true, true, true, true, true, true, true, true, true}
+};
+
+char* getRegister(){
+	for(int i = 0; i < 12; i++){
+		if(registers.free[i]==true){
+			registers.free[i] = false;
+			return registers.names[i];
+		}
+	}
+}
+
+void freeRegister(char* name){
+	for(int i = 0; i < 12; i++){
+		if(strcmp(name, registers.names[i])){
+			registers.free[i] = true;
+			return;
+		}
+	}
+}
 
 %}
 
@@ -11,28 +44,28 @@
 %start start
 %%
 
-start: INIT									# 1 # {printf("init\n");}
-start: FUNCTION								# 1 # {printf("function\n");}
-start: LABEL								# 1 # {printf("label %s\n", bnode->str);}
-start: FUNCTION_END							# 1 # {printf("function ende\n");}
-start: GOTO									# 1 # {printf("goto %s\n", bnode->str);}
-start: VARIABLE								# 1 # {printf("variable %s\n", bnode->str);}
-start: NUMBER								# 1 # {printf("number %d\n", bnode->num);}
-start: REGISTER								# 1 # {printf("register\n");}
-start: NOT(start)							# 1 # {printf("not\n");}
-start: MINUS(start)							# 1 # {printf("minus\n");}
-start: PLUS(start, start)					# 1 # {printf("plus\n");}
-start: TIMES(start, start)					# 1 # {printf("times\n");}
-start: AND(start, start)					# 1 # {printf("and\n");}
-start: GREATER(start, start)				# 1 # {printf("greater\n");}
-start: EQUAL(start, start)					# 1 # {printf("equal\n");}
-start: RETURN(start)						# 1 # {printf("return\n");}
-start: VARIABLE_ASSIGNMENT(start, start)	# 1 # {printf("variable assignment\n");}
-start: VARIABLE_DEFINITION(start)			# 1 # {printf("variable definition %s\n", bnode->str);}
-start: TERM_EXECUTION(start)				# 1 # {printf("term execution\n");}
-start: ARRAY_ASSIGN(start, start)			# 1 # {printf("array asign\n");}
-start: IF(start)	 						# 1 # {printf("if goto\n");}
-start: ARRAY_ACCESS(start, start)			# 1 # {printf("array access\n");}
+start: INIT									# 1 # {printf("\t.file\t\"codea.s\"\n\t.text\n");}
+start: FUNCTION								# 1 # {printf("\t.globl\t%s\n\t.type\t%s, @function\n%s:\n.LFB%ld:\n\t.cfi_startproc\n", bnode->str, bnode->str, bnode->str, functionNum); currentFunctionName=bnode->str;}
+start: LABEL								# 1 # {printf("\t%ld_%s:\n", functionNum, bnode->str);}
+start: FUNCTION_END							# 1 # {printf("\t.cfi_endproc\n.LFE%ld:\n\t.size\t%s, .-%s\n",functionNum, currentFunctionName, currentFunctionName); functionNum++;}
+start: GOTO									# 1 # {printf("\tjmp %ld_%s\n", functionNum, bnode->str);}
+start: VARIABLE								# 1 # {printf("TODO variable %s\n", bnode->str);}
+start: NUMBER								# 1 # {printf("TODO number %d\n", bnode->num);}
+start: REGISTER								# 1 # {printf("TODO register\n");}
+start: NOT(start)							# 1 # {printf("TODO not\n");}
+start: MINUS(start)							# 1 # {printf("TODO minus\n");}
+start: PLUS(start, start)					# 1 # {printf("TODO plus\n");}
+start: TIMES(start, start)					# 1 # {printf("TODO times\n");}
+start: AND(start, start)					# 1 # {printf("TODO and\n");}
+start: GREATER(start, start)				# 1 # {printf("TODO greater\n");}
+start: EQUAL(start, start)					# 1 # {printf("TODO equal\n");}
+start: RETURN(start)						# 1 # {printf("TODO return\n");}
+start: VARIABLE_ASSIGNMENT(start, start)	# 1 # {printf("TODO variable assignment\n");}
+start: VARIABLE_DEFINITION(start)			# 1 # {printf("TODO variable definition %s\n", bnode->str);}
+start: TERM_EXECUTION(start)				# 1 # {printf("TODO term execution\n");}
+start: ARRAY_ASSIGN(start, start)			# 1 # {printf("TODO array asign\n");}
+start: IF(start)	 						# 1 # {printf("TODO if goto\n");}
+start: ARRAY_ACCESS(start, start)			# 1 # {printf("TODO array access\n");}
 %%
 
 extern treenode *root;
