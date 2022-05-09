@@ -9,7 +9,7 @@ treenode *newOperatorNode(int op, treenode *left, treenode *right)
   newNode->op = op;
   newNode->kids[0] = left;
   newNode->kids[1] = right;
-  newNode->regname=0;
+  newNode->regName=0;
   newNode->num=0;
 
   return newNode;
@@ -18,7 +18,7 @@ treenode *newOperatorNode(int op, treenode *left, treenode *right)
 treenode *newRegisterNode(char* regname)
 {
   treenode *newNode = newOperatorNode(REGISTER,NULL,NULL);
-  newNode->regname = regname;
+  newNode->regName = regname;
   return newNode;
 }
 

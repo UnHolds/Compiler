@@ -20,5 +20,9 @@ extern Register registers;
 
 char* getRegister();
 void freeRegister(char* name);
+char* newVariableAndGetRegister(char* variableName);
+char* getRegisterByVariable(char* variableName);
+void freeRegisterIfNotVariable(char* name);
+void printRegisterDebug();
 
 #endif

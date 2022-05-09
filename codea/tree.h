@@ -38,7 +38,7 @@ typedef struct s_node {
 	struct s_node   *kids[2];
 	STATEPTR_TYPE	state;
         /* user defined data fields follow here */
-	char* regname;
+	char* regName;
     int regNum;
 	long num;
     char* str;

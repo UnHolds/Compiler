@@ -18,28 +18,33 @@ char* currentFunctionName = NULL;
 %start start
 %%
 
-start: INIT									# 1 # {printf("\t.file\t\"codea.s\"\n\t.text\n");}
-start: FUNCTION								# 1 # {printf("\t.globl\t%s\n\t.type\t%s, @function\n%s:\n.LFB%ld:\n\t.cfi_startproc\n", bnode->str, bnode->str, bnode->str, functionNum); currentFunctionName=bnode->str;}
-start: LABEL								# 1 # {printf("\t%ld_%s:\n", functionNum, bnode->str);}
-start: FUNCTION_END							# 1 # {printf("\t.cfi_endproc\n.LFE%ld:\n\t.size\t%s, .-%s\n",functionNum, currentFunctionName, currentFunctionName); functionNum++;}
-start: GOTO									# 1 # {printf("\tjmp %ld_%s\n", functionNum, bnode->str);}
-start: VARIABLE								# 1 # {printf("TODO variable %s\n", bnode->str);}
-start: NUMBER								# 1 # {printf("TODO number %d\n", bnode->num);}
-start: REGISTER								# 1 # {printf("TODO register\n");}
-start: NOT(start)							# 1 # {printf("TODO not\n");}
-start: MINUS(start)							# 1 # {printf("TODO minus\n");}
-start: PLUS(start, start)					# 1 # {printf("TODO plus\n");}
-start: TIMES(start, start)					# 1 # {printf("TODO times\n");}
-start: AND(start, start)					# 1 # {printf("TODO and\n");}
-start: GREATER(start, start)				# 1 # {printf("TODO greater\n");}
-start: EQUAL(start, start)					# 1 # {printf("TODO equal\n");}
-start: RETURN(start)						# 1 # {printf("TODO return\n");}
-start: VARIABLE_ASSIGNMENT(start, start)	# 1 # {printf("TODO variable assignment\n");}
-start: VARIABLE_DEFINITION(start)			# 1 # {printf("TODO variable definition %s\n", bnode->str);}
-start: TERM_EXECUTION(start)				# 1 # {printf("TODO term execution\n");}
-start: ARRAY_ASSIGN(start, start)			# 1 # {printf("TODO array asign\n");}
-start: IF(start)	 						# 1 # {printf("TODO if goto\n");}
-start: ARRAY_ACCESS(start, start)			# 1 # {printf("TODO array access\n");}
+start: INIT											# 1 # {printf("\t.file\t\"codea.s\"\n\t.text\n");}
+start: FUNCTION										# 1 # {printf("\t.globl\t%s\n\t.type\t%s, @function\n%s:\n.LFB%ld:\n\t.cfi_startproc\n", bnode->str, bnode->str, bnode->str, functionNum); currentFunctionName=bnode->str;}
+start: LABEL										# 1 # {printf("\t%ld_%s:\n", functionNum, bnode->str);}
+start: FUNCTION_END									# 1 # {printf("\t.cfi_endproc\n.LFE%ld:\n\t.size\t%s, .-%s\n",functionNum, currentFunctionName, currentFunctionName); functionNum++;}
+start: GOTO											# 1 # {printf("\tjmp %ld_%s\n", functionNum, bnode->str);}
+start: VARIABLE										# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
+start: NUMBER										# 1 # {bnode->regName = getRegister(); printf("\tmov $%ld, %s\n", bnode->num, bnode->regName);}
+start: REGISTER										# 1 # {printf("TODO register\n");}
+start: NOT(start)									# 1 # {printf("TODO not\n");}
+start: MINUS(start)									# 1 # {printf("TODO minus\n");}
+start: PLUS(start, start)							# 1 # {bnode->regName = getRegister(); printf("\tmov $0, %s\n\tadd %s, %s\n\tadd %s, %s\n", bnode->regName, bnode->kids[1]->regName, bnode->regName, bnode->kids[0]->regName, bnode->regName);}
+start: TIMES(start, start)							# 1 # {printf("\timul %s, %s\n", bnode->kids[1]->regName, bnode->kids[0]->regName); bnode->regName = bnode->kids[0]->regName;}
+start: AND(start, start)							# 1 # {printf("TODO and\n");}
+start: GREATER(start, start)						# 1 # {printf("TODO greater\n");}
+start: EQUAL(start, start)							# 1 # {printf("TODO equal\n");}
+start: RETURN(start)								# 1 # {printf("TODO return\n");}
+start: VARIABLE_ASSIGNMENT(assignVariable, start)	# 1 # {printf("\tmov %s, %s\n", bnode->kids[1]->regName, bnode->kids[0]->regName);}
+start: VARIABLE_ASSIGNMENT(assignArray, start)		# 1 # {printf("TODO222 variable array assignment\n");}
+start: VARIABLE_DEFINITION(start)					# 1 # {bnode->regName = newVariableAndGetRegister(bnode->str); printf("\tmov %s, %s\n", bnode->kids[0]->regName, bnode->regName);}
+start: TERM_EXECUTION(start)						# 1 # {printf("TODO term execution\n");}
+start: ARRAY_ASSIGN(start, start)					# 1 # {printf("TODO array asign\n");}
+start: IF(start)	 								# 1 # {printf("TODO if goto\n");}
+start: ARRAY_ACCESS(start, start)					# 1 # {printf("TODO array access\n");}
+
+
+assignVariable: VARIABLE							# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
+assignArray: 	ARRAY_ASSIGN(start, start)			# 1 # {printf("TODO array asign\n");}
 %%
 
 extern treenode *root;

@@ -7,6 +7,7 @@
 #include "list.h"
 #include "tree.h"
 #include "treeOperators.h"
+#include "register.h"
 
 #define YYERROR_VERBOSE 1
 extern int yylex();
