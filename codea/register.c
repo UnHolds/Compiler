@@ -15,6 +15,9 @@ char* getRegister(){
 			return registers.name[i];
 		}
 	}
+
+	printf("ERROR no free registers! (getRegister)");
+	return NULL;
 }
 
 void freeRegister(char* name){
@@ -46,6 +49,9 @@ char* newVariableAndGetRegister(char* variableName){
 			return registers.name[i];
 		}
 	}
+
+	printf("ERROR no free registers! (newVariableAndGetRegister)");
+	return NULL;
 }
 
 char* getRegisterByVariable(char* variableName){
@@ -54,6 +60,8 @@ char* getRegisterByVariable(char* variableName){
 			return registers.name[i];
 		}
 	}
+
+	return NULL;
 }
 
 void printRegisterDebug(){

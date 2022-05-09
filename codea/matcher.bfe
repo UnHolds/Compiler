@@ -41,9 +41,9 @@ start: TIMES(start, start)							# 1 # {printf("TODO TIMES");}
 start: AND(start, start)							# 1 # {printf("TODO and\n");}
 start: GREATER(start, start)						# 1 # {printf("TODO greater\n");}
 start: EQUAL(start, start)							# 1 # {printf("TODO equal\n");}
-start: RETURN(start)								# 1 # {printf("TODO return\n");}
+start: RETURN(start)								# 1 # {printf("\tmov %s, \%rax\n", bnode->kids[0]->regName);}
 start: VARIABLE_ASSIGNMENT(assignVariable, start)	# 1 # {printf("\tmov %s, %s\n", bnode->kids[1]->regName, bnode->kids[0]->regName); freeRegisterIfNotVariable(bnode->kids[1]->regName);}
-start: VARIABLE_ASSIGNMENT(assignArray, start)		# 1 # {printf("TODO222 variable array assignment\n");}
+start: VARIABLE_ASSIGNMENT(assignArray, start)		# 1 # {printf("TODO variable array assignment\n");}
 start: VARIABLE_DEFINITION(start)					# 1 # {bnode->regName = newVariableAndGetRegister(bnode->str); printf("\tmov %s, %s\n", bnode->kids[0]->regName, bnode->regName); freeRegisterIfNotVariable(bnode->kids[0]->regName);}
 start: TERM_EXECUTION(start)						# 1 # {printf("TODO term execution\n");}
 start: ARRAY_ASSIGN(start, start)					# 1 # {printf("TODO array asign\n");}
@@ -58,7 +58,7 @@ assignArray: 	ARRAY_ASSIGN(start, start)			# 1 # {printf("TODO array asign\n");}
 extern treenode *root;
 extern int yyparse(void);
 void burm_reduce(NODEPTR_TYPE bnode, int goalnt);
-STATEPTR_TYPE burm_label(NODEPTR_TYPE p); //TODO check if this works
+STATEPTR_TYPE burm_label(NODEPTR_TYPE p);
 
 void invoke_burm(NODEPTR_TYPE root) {
 	burm_label(root);
