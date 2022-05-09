@@ -70,4 +70,11 @@ void printRegisterDebug(){
 	}
 }
 
+void freeAllRegister(){
+	for(int i = 0; i < 12; i++){
+		registers.variable[i] = "\0";
+		registers.free[i] = true;
+	}
+}
+
 

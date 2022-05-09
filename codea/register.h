@@ -23,6 +23,7 @@ void freeRegister(char* name);
 char* newVariableAndGetRegister(char* variableName);
 char* getRegisterByVariable(char* variableName);
 void freeRegisterIfNotVariable(char* name);
+void freeAllRegister();
 void printRegisterDebug();
 
 #endif

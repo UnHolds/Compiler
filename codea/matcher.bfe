@@ -22,14 +22,14 @@ void mathOP(NODEPTR_TYPE bnode, char * type){
 
 %}
 
-%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21
+%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22
 %start start
 %%
 
 start: INIT											# 1 # {printf("\t.file\t\"codea.s\"\n\t.text\n");}
 start: FUNCTION										# 1 # {printf("\t.globl\t%s\n\t.type\t%s, @function\n%s:\n.LFB%ld:\n\t.cfi_startproc\n", bnode->str, bnode->str, bnode->str, functionNum); currentFunctionName=bnode->str;}
 start: LABEL										# 1 # {printf("\t%ld_%s:\n", functionNum, bnode->str);}
-start: FUNCTION_END									# 1 # {printf("\t.cfi_endproc\n.LFE%ld:\n\t.size\t%s, .-%s\n",functionNum, currentFunctionName, currentFunctionName); functionNum++;}
+start: FUNCTION_END									# 1 # {printf("\t.cfi_endproc\n.LFE%ld:\n\t.size\t%s, .-%s\n",functionNum, currentFunctionName, currentFunctionName); functionNum++; freeAllRegister();}
 start: GOTO											# 1 # {printf("\tjmp %ld_%s\n", functionNum, bnode->str);}
 start: VARIABLE										# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
 start: NUMBER										# 1 # {bnode->regName = getRegister(); printf("\tmov $%ld, %s\n", bnode->num, bnode->regName);}
@@ -49,10 +49,13 @@ start: TERM_EXECUTION(start)						# 1 # {printf("TODO term execution\n");}
 start: ARRAY_ASSIGN(start, start)					# 1 # {printf("TODO array asign\n");}
 start: IF(start)	 								# 1 # {printf("TODO if goto\n");}
 start: ARRAY_ACCESS(start, start)					# 1 # {printf("TODO array access\n");}
+start: PARS(newParameter)							# 1 # {} //simple assignment should work because the regs are in the right order in the register file (see calling convention)
 
 
 assignVariable: VARIABLE							# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
 assignArray: 	ARRAY_ASSIGN(start, start)			# 1 # {printf("TODO array asign\n");}
+
+newParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str);}
 %%
 
 extern treenode *root;

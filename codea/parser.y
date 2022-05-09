@@ -120,14 +120,28 @@ end: T_END
 ;
 
 
+
+
 pars: T_ID
     @{
         @i @pars.s_variables@ = add_string(@T_ID.str@, new_string_list());
+
+        @codegen {
+            treenode* vart = newVariableNode(@T_ID.str@);
+            treenode* t = newOperatorNode(PARS, vart, NULL);
+            invoke_burm(t);
+        }
     @}
     | pars T_COMMA T_ID
     @{
         @i @pars.0.s_variables@ = add_string(@T_ID.str@, @pars.1.s_variables@);
         @LRpost find_variable_duplicates(@pars.0.s_variables@);
+
+        @codegen {
+            treenode* vart = newVariableNode(@T_ID.str@);
+            treenode* t = newOperatorNode(PARS, vart, NULL);
+            invoke_burm(t);
+        }
     @}
 ;
 

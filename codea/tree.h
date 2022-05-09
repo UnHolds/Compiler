@@ -24,6 +24,7 @@
 #define ARRAY_ASSIGN 19
 #define IF 20
 #define ARRAY_ACCESS 21
+#define PARS 22
 
 #ifdef USE_IBURG
 #ifndef BURM
