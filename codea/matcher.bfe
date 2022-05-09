@@ -28,9 +28,9 @@ void mathOP(NODEPTR_TYPE bnode, char * type){
 
 start: INIT											# 1 # {printf("\t.file\t\"codea.s\"\n\t.text\n");}
 start: FUNCTION										# 1 # {printf("\t.globl\t%s\n\t.type\t%s, @function\n%s:\n.LFB%ld:\n\t.cfi_startproc\n", bnode->str, bnode->str, bnode->str, functionNum); currentFunctionName=bnode->str;}
-start: LABEL										# 1 # {printf("\t%ld_%s:\n", functionNum, bnode->str);}
-start: FUNCTION_END									# 1 # {printf("\t.cfi_endproc\n.LFE%ld:\n\t.size\t%s, .-%s\n",functionNum, currentFunctionName, currentFunctionName); functionNum++; freeAllRegister();}
-start: GOTO											# 1 # {printf("\tjmp %ld_%s\n", functionNum, bnode->str);}
+start: LABEL										# 1 # {printf("\t_%ld_%s:\n", functionNum, bnode->str);}
+start: FUNCTION_END									# 1 # {printf("\tret\n\t.cfi_endproc\n.LFE%ld:\n\t.size\t%s, .-%s\n",functionNum, currentFunctionName, currentFunctionName); functionNum++; freeAllRegister();}
+start: GOTO											# 1 # {printf("\tjmp _%ld_%s\n", functionNum, bnode->str);}
 start: VARIABLE										# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
 start: NUMBER										# 1 # {bnode->regName = getRegister(); printf("\tmov $%ld, %s\n", bnode->num, bnode->regName);}
 start: REGISTER										# 1 # {printf("TODO register\n");}
@@ -41,7 +41,7 @@ start: TIMES(start, start)							# 1 # {printf("TODO TIMES");}
 start: AND(start, start)							# 1 # {printf("TODO and\n");}
 start: GREATER(start, start)						# 1 # {printf("TODO greater\n");}
 start: EQUAL(start, start)							# 1 # {printf("TODO equal\n");}
-start: RETURN(start)								# 1 # {printf("\tmov %s, \%rax\n", bnode->kids[0]->regName);}
+start: RETURN(start)								# 1 # {printf("\tmov %s, \%rax\n\tret\n", bnode->kids[0]->regName);}
 start: VARIABLE_ASSIGNMENT(assignVariable, start)	# 1 # {printf("\tmov %s, %s\n", bnode->kids[1]->regName, bnode->kids[0]->regName); freeRegisterIfNotVariable(bnode->kids[1]->regName);}
 start: VARIABLE_ASSIGNMENT(assignArray, start)		# 1 # {printf("TODO variable array assignment\n");}
 start: VARIABLE_DEFINITION(start)					# 1 # {bnode->regName = newVariableAndGetRegister(bnode->str); printf("\tmov %s, %s\n", bnode->kids[0]->regName, bnode->regName); freeRegisterIfNotVariable(bnode->kids[0]->regName);}
