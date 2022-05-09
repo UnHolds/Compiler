@@ -28,7 +28,14 @@ void freeRegister(char* name){
 }
 
 void freeRegisterIfNotVariable(char* name){
-
+	for(int i = 0; i < 12; i++){
+		if(strcmp(name, registers.name[i]) == 0){
+			if(strcmp("\0", registers.variable[i]) == 0){
+				freeRegister(name);
+			return;
+		}
+		}
+	}
 }
 
 char* newVariableAndGetRegister(char* variableName){
