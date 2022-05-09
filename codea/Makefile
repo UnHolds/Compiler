@@ -25,14 +25,17 @@ list.o: list.c list.h
 treeOperators.o: treeOperators.c treeOperators.h
 	gcc -c treeOperators.c
 
+register.o: register.c register.h
+	gcc -c register.c
+
 oxout.tab.o: oxout.tab.c
 	gcc -c oxout.tab.c
 
 lex.yy.o: lex.yy.c
 	gcc -c lex.yy.c
 
-codea: oxout.tab.o lex.yy.o matcher.o list.o treeOperators.o
-	gcc -o codea oxout.tab.o lex.yy.o list.o matcher.o treeOperators.o -ly -ll -lfl
+codea: oxout.tab.o lex.yy.o matcher.o list.o treeOperators.o register.o
+	gcc -o codea oxout.tab.o lex.yy.o list.o matcher.o treeOperators.o register.o -ly -ll -lfl
 
 clean:
 	rm -rf oxout.* lex.yy.* codea matcher.c matcher.brg *.o
