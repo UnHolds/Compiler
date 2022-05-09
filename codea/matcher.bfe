@@ -11,12 +11,21 @@
 long functionNum = 0;
 char* currentFunctionName = NULL;
 
-void mathOP(NODEPTR_TYPE bnode, char * type, long initValue){
+//for two register math operations
+void mathOP2(NODEPTR_TYPE bnode, char * type, long initValue){
 	bnode->regName = getRegister();
 	printf("\tmov $%ld, %s\n",initValue, bnode->regName);
 	printf("\t%s %s, %s\n", type, bnode->kids[1]->regName, bnode->regName);
 	freeRegisterIfNotVariable(bnode->kids[1]->regName);
 	printf("\t%s %s, %s\n", type, bnode->kids[0]->regName, bnode->regName);
+	freeRegisterIfNotVariable(bnode->kids[0]->regName);
+}
+
+//for one register math operations
+void mathOP1(NODEPTR_TYPE bnode, char * type){
+	bnode->regName = getRegister();
+	printf("\tmov %s, %s\n", bnode->kids[0]->regName, bnode->regName);
+	printf("\t%s %s\n", type, bnode->regName);
 	freeRegisterIfNotVariable(bnode->kids[0]->regName);
 }
 
@@ -34,11 +43,11 @@ start: GOTO											# 1 # {printf("\tjmp _%ld_%s\n", functionNum, bnode->str);
 start: VARIABLE										# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
 start: NUMBER										# 1 # {bnode->regName = getRegister(); printf("\tmov $%ld, %s\n", bnode->num, bnode->regName);}
 start: REGISTER										# 1 # {printf("TODO register\n");}
-start: NOT(start)									# 1 # {printf("TODO not\n");}
-start: MINUS(start)									# 1 # {bnode->regName = bnode->kids[0]->regName; printf("\tneg %s\n", bnode->regName);}
-start: PLUS(start, start)							# 1 # {mathOP(bnode, "add", 0);}
-start: TIMES(start, start)							# 1 # {mathOP(bnode, "imul", 1);}
-start: AND(start, start)							# 1 # {mathOP(bnode, "and", 0xFFFFFFFFFFFFFFFF);}
+start: NOT(start)									# 1 # {mathOP1(bnode, "not");}
+start: MINUS(start)									# 1 # {mathOP1(bnode, "neg");}
+start: PLUS(start, start)							# 1 # {mathOP2(bnode, "add", 0);}
+start: TIMES(start, start)							# 1 # {mathOP2(bnode, "imul", 1);}
+start: AND(start, start)							# 1 # {mathOP2(bnode, "and", 0xFFFFFFFFFFFFFFFF);}
 start: GREATER(start, start)						# 1 # {printf("TODO greater\n");}
 start: EQUAL(start, start)							# 1 # {printf("TODO equal\n");}
 start: RETURN(start)								# 1 # {printf("\tmov %s, \%rax\n\tret\n", bnode->kids[0]->regName);}
