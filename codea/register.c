@@ -16,11 +16,17 @@ char* getRegister(){
 		}
 	}
 
-	printf("ERROR no free registers! (getRegister)");
+	printf("ERROR no free registers! (getRegister)\n");
 	return NULL;
 }
 
 void freeRegister(char* name){
+
+	if(name == NULL){
+		printf("ERROR null register given (freeRegister)\n");
+		return;
+	}
+
 	for(int i = 0; i < 12; i++){
 		if(strcmp(name, registers.name[i]) == 0){
 			registers.variable[i] = "\0";
@@ -31,6 +37,12 @@ void freeRegister(char* name){
 }
 
 void freeRegisterIfNotVariable(char* name){
+
+	if(name == NULL){
+		printf("ERROR null register given (freeRegisterIfNotVariable)\n");
+		return;
+	}
+
 	for(int i = 0; i < 12; i++){
 		if(strcmp(name, registers.name[i]) == 0){
 			if(strcmp("\0", registers.variable[i]) == 0){
@@ -50,7 +62,7 @@ char* newVariableAndGetRegister(char* variableName){
 		}
 	}
 
-	printf("ERROR no free registers! (newVariableAndGetRegister)");
+	printf("ERROR no free registers! (newVariableAndGetRegister)\n");
 	return NULL;
 }
 

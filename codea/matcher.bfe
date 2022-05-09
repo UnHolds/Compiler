@@ -35,7 +35,7 @@ start: VARIABLE										# 1 # {bnode->regName = getRegisterByVariable(bnode->st
 start: NUMBER										# 1 # {bnode->regName = getRegister(); printf("\tmov $%ld, %s\n", bnode->num, bnode->regName);}
 start: REGISTER										# 1 # {printf("TODO register\n");}
 start: NOT(start)									# 1 # {printf("TODO not\n");}
-start: MINUS(start)									# 1 # {printf("TODO minus\n");}
+start: MINUS(start)									# 1 # {printf("TODO MINUS\n");}
 start: PLUS(start, start)							# 1 # {mathOP(bnode, "add", 0);}
 start: TIMES(start, start)							# 1 # {mathOP(bnode, "imul", 1);}
 start: AND(start, start)							# 1 # {mathOP(bnode, "and", 0xFFFFFFFFFFFFFFFF);}
