@@ -32,7 +32,7 @@ void mathOP1(NODEPTR_TYPE bnode, char * type){
 void logicOP2(NODEPTR_TYPE bnode, char * type){
 
 	printf("\txor %%rax, %%rax\n");
-	printf("\tcmp %s, %s\n", bnode->kids[0]->regName, bnode->kids[1]->regName);
+	printf("\tcmp %s, %s\n", bnode->kids[1]->regName, bnode->kids[0]->regName);
 	freeRegisterIfNotVariable(bnode->kids[0]->regName);
 	freeRegisterIfNotVariable(bnode->kids[1]->regName);
 
@@ -61,7 +61,7 @@ start: MINUS(start)									# 1 # {mathOP1(bnode, "neg");}
 start: PLUS(start, start)							# 1 # {mathOP2(bnode, "add", 0);}
 start: TIMES(start, start)							# 1 # {mathOP2(bnode, "imul", 1);}
 start: AND(start, start)							# 1 # {mathOP2(bnode, "and", 0xFFFFFFFFFFFFFFFF);}
-start: GREATER(start, start)						# 1 # {printf("TODO greater\n");}
+start: GREATER(start, start)						# 1 # {logicOP2(bnode, "setg");} //SETG = set if greater
 start: EQUAL(start, start)							# 1 # {logicOP2(bnode, "sete");} //SETE = set if equal
 start: RETURN(start)								# 1 # {printf("\tmov %s, \%rax\n\tret\n", bnode->kids[0]->regName);}
 start: VARIABLE_ASSIGNMENT(assignVariable, start)	# 1 # {printf("\tmov %s, %s\n", bnode->kids[1]->regName, bnode->kids[0]->regName); freeRegisterIfNotVariable(bnode->kids[1]->regName);}
