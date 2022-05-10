@@ -88,7 +88,7 @@ start: VARIABLE_DEFINITION(start)					# 1 # {bnode->regName = newVariableAndGetR
 start: TERM_EXECUTION(start)						# 1 # {} //TODO but i think nothing needs to be done here
 start: ARRAY_ASSIGN(start, start)					# 1 # {printf("TODO array asign\n");}
 start: IF(start)	 								# 1 # {gotoIf(bnode);}
-start: ARRAY_ACCESS(start, start)					# 1 # {printf("TODO array access\n");}
+start: ARRAY_ACCESS(start, start)					# 1 # {calculateArrayAddress(bnode); printf("\tmovq (%s), %s\n", bnode->regName, bnode->regName);}
 start: PARS(newParameter)							# 1 # {} //simple assignment should work because the regs are in the right order in the register file (see calling convention)
 
 
