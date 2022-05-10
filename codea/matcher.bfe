@@ -42,6 +42,12 @@ void logicOP2(NODEPTR_TYPE bnode, char * type){
 	printf("\tmov %%rax, %s\n",  bnode->regName);
 }
 
+void gotoIf(NODEPTR_TYPE bnode){
+	printf("\tmov %s, %%rax\n", bnode->kids[0]->regName);
+	printf("\ttest $1, %%rax\n");
+	printf("\tjnz _%ld_%s\n", functionNum, bnode->kids[1]->str);
+}
+
 %}
 
 %term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22
@@ -69,7 +75,7 @@ start: VARIABLE_ASSIGNMENT(assignArray, start)		# 1 # {printf("TODO variable arr
 start: VARIABLE_DEFINITION(start)					# 1 # {bnode->regName = newVariableAndGetRegister(bnode->str); printf("\tmov %s, %s\n", bnode->kids[0]->regName, bnode->regName); freeRegisterIfNotVariable(bnode->kids[0]->regName);}
 start: TERM_EXECUTION(start)						# 1 # {printf("TODO term execution\n");}
 start: ARRAY_ASSIGN(start, start)					# 1 # {printf("TODO array asign\n");}
-start: IF(start)	 								# 1 # {printf("TODO if goto\n");}
+start: IF(start)	 								# 1 # {gotoIf(bnode);}
 start: ARRAY_ACCESS(start, start)					# 1 # {printf("TODO array access\n");}
 start: PARS(newParameter)							# 1 # {} //simple assignment should work because the regs are in the right order in the register file (see calling convention)
 

@@ -212,7 +212,9 @@ stat: T_RETURN expr
         @i @expr.i_variables@ = @stat.i_variables@;
 
         @codegen {
-            treenode* t = newOperatorNode(IF, @expr.node@, NULL);
+            treenode* t_label = newOperatorNode(GOTO, NULL, NULL);
+            t_label->str = @T_ID.str@;
+            treenode* t = newOperatorNode(IF, @expr.node@, t_label);
             invoke_burm(t);
         }
     @}
