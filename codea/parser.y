@@ -128,7 +128,7 @@ pars: T_ID
 
         @codegen {
             treenode* vart = newVariableNode(@T_ID.str@);
-            treenode* t = newOperatorNode(PARS, vart, NULL);
+            treenode* t = newOperatorNode(PARS_LAST, vart, NULL);
             invoke_burm(t);
         }
     @}

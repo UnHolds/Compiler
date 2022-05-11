@@ -60,9 +60,10 @@ void calculateArrayAddress(NODEPTR_TYPE bnode){
 }
 
 
+
 %}
 
-%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22
+%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22 PARS_LAST=23
 %start start
 %%
 
@@ -90,12 +91,13 @@ start: ARRAY_ASSIGN(start, start)					# 1 # {printf("TODO array asign\n");} //ne
 start: IF(start)	 								# 1 # {gotoIf(bnode);}
 start: ARRAY_ACCESS(start, start)					# 1 # {calculateArrayAddress(bnode); printf("\tmovq (%s), %s\n", bnode->regName, bnode->regName);}
 start: PARS(newParameter)							# 1 # {} //simple assignment should work because the regs are in the right order in the register file (see calling convention)
-
+start: PARS_LAST(lastParameter)						# 1 # {}
 
 assignVariable: VARIABLE							# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
 assignArray: 	ARRAY_ASSIGN(start, start)			# 1 # {calculateArrayAddress(bnode);}
 
 newParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str);}
+lastParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str); fixParameterArrangement();}
 %%
 
 extern treenode *root;
