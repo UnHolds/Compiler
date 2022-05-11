@@ -105,6 +105,7 @@ def:    T_ID T_ROUND_BRACKET_OPENED pars T_ROUND_BRACKET_CLOSED stats end
 
         @codegen {
             treenode* t = newOperatorNode(FUNCTION, NULL, NULL);
+            t->str = @T_ID.str@;
             invoke_burm(t);
         }
     @}
