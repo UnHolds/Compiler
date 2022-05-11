@@ -10,7 +10,7 @@
 
 long functionNum = 0;
 char* currentFunctionName = NULL;
-long parameterCount = 0;
+char* parameter2odMemoryAddressRegister = "";
 
 //for two register math operations
 void mathOP2(NODEPTR_TYPE bnode, char * type, long initValue){
@@ -60,11 +60,15 @@ void calculateArrayAddress(NODEPTR_TYPE bnode){
 	freeRegisterIfNotVariable(bnode->kids[1]->regName);
 }
 
+void loadParameterValueFromMemoryIntoRegister(NODEPTR_TYPE bnode){
+	printf("\tadd $8, %s\n", parameter2odMemoryAddressRegister);
+	printf("\tmovq (%s), %s\n", parameter2odMemoryAddressRegister, getRegisterByVariable(bnode->str));
+}
 
 
 %}
 
-%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22 PARS_LAST=23
+%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22 PARS_LAST=23 PARS_2OD=24 PARS_2OD_ADDRESS=25
 %start start
 %%
 
@@ -91,14 +95,23 @@ start: TERM_EXECUTION(start)						# 1 # {} //TODO but i think nothing needs to b
 start: ARRAY_ASSIGN(start, start)					# 1 # {printf("TODO array asign\n");} //never called??
 start: IF(start)	 								# 1 # {gotoIf(bnode);}
 start: ARRAY_ACCESS(start, start)					# 1 # {calculateArrayAddress(bnode); printf("\tmovq (%s), %s\n", bnode->regName, bnode->regName);}
-start: PARS(newParameter, start)					# 1 # {} //simple assignment should work because the regs are in the right order in the register file (see calling convention)
+start: PARS(start, newParameter)					# 1 # {} //simple assignment should work because the regs are in the right order in the register file (see calling convention)
 start: PARS_LAST(lastParameter)						# 1 # {}
+start: PARS_2OD(start, pars_2od)					# 1 # {freeRegisterIfNotVariable(parameter2odMemoryAddressRegister);} //load values into get registers
+start: PARS_2OD_ADDRESS								# 1 # {parameter2odMemoryAddressRegister = getRegister();} //parameter count must be increased, because the addr is a parameter
 
 assignVariable: VARIABLE							# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
 assignArray: 	ARRAY_ASSIGN(start, start)			# 1 # {calculateArrayAddress(bnode);}
 
-newParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str); parameterCount++;}
-lastParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str); parameterCount++; fixParameterArrangement(0, parameterCount);}
+newParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str);}
+lastParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str);}
+
+
+pars_2od: PARS(pars_2od, newParameter2OD)			# 1 # {}
+pars_2od: PARS_LAST(lastParameter2OD)				# 1 # {}
+
+newParameter2OD: VARIABLE							# 1 # {bnode->regName = newVariableAndGetRegister(bnode->str); loadParameterValueFromMemoryIntoRegister(bnode);}
+lastParameter2OD: VARIABLE							# 1 # {bnode->regName = newVariableAndGetRegister(bnode->str); loadParameterValueFromMemoryIntoRegister(bnode);}
 %%
 
 extern treenode *root;

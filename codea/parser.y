@@ -109,6 +109,9 @@ def:    T_ID T_ROUND_BRACKET_OPENED pars T_ROUND_BRACKET_CLOSED stats end
             treenode* t = newOperatorNode(FUNCTION, NULL, NULL);
             t->str = @T_ID.str@;
             invoke_burm(t);
+
+            invoke_burm(@pars.1.node@);
+            invoke_burm(newOperatorNode(PARS_2OD, newOperatorNode(PARS_2OD_ADDRESS, NULL, NULL), @pars.0.node@));
         }
     @}
 ;
@@ -136,7 +139,7 @@ pars: T_ID
         @i @pars.0.s_variables@ = add_string(@T_ID.str@, @pars.1.s_variables@);
         @LRpost find_variable_duplicates(@pars.0.s_variables@);
 
-        @i @pars.0.node@ = newOperatorNode(PARS, newVariableNode(@T_ID.str@), @pars.1.node@);
+        @i @pars.0.node@ = newOperatorNode(PARS, @pars.1.node@, newVariableNode(@T_ID.str@));
     @}
 ;
 

@@ -89,20 +89,5 @@ void freeAllRegister(){
 	}
 }
 
-void fixParameterArrangement(long start, long num){
-
-
-	int index = start + num - 1;
-	printf("start: %ld    num: %ld \n", start, num);
-
-	for(int i = start; i < num/2; i++){
-		if(registers.free[i] == false){
-			char* tmp = registers.variable[index];
-			registers.variable[index] = registers.variable[i];
-			registers.variable[i] = tmp;
-			index--;
-		}
-	}
-}
 
 

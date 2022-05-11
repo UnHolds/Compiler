@@ -26,6 +26,8 @@
 #define ARRAY_ACCESS 21
 #define PARS 22
 #define PARS_LAST 23
+#define PARS_2OD 24
+#define PARS_2OD_ADDRESS 25
 
 #ifdef USE_IBURG
 #ifndef BURM
