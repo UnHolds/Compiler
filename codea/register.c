@@ -1,7 +1,7 @@
 #include "register.h"
 
 
-
+//r12 - r15 are callee saved TODO
 Register registers = {
 	.name = {"\%rdi", "\%rsi", "\%rdx", "\%rcx", "\%r8", "\%r9", "\%r10", "\%r11", "\%r12", "\%r13", "\%r14", "\%r15"},
 	.variable = {"\0", "\0", "\0" ,"\0", "\0", "\0", "\0", "\0" ,"\0", "\0", "\0", "\0"},
