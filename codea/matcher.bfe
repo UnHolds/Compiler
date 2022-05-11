@@ -10,6 +10,7 @@
 
 long functionNum = 0;
 char* currentFunctionName = NULL;
+long parameterCount = 0;
 
 //for two register math operations
 void mathOP2(NODEPTR_TYPE bnode, char * type, long initValue){
@@ -90,14 +91,14 @@ start: TERM_EXECUTION(start)						# 1 # {} //TODO but i think nothing needs to b
 start: ARRAY_ASSIGN(start, start)					# 1 # {printf("TODO array asign\n");} //never called??
 start: IF(start)	 								# 1 # {gotoIf(bnode);}
 start: ARRAY_ACCESS(start, start)					# 1 # {calculateArrayAddress(bnode); printf("\tmovq (%s), %s\n", bnode->regName, bnode->regName);}
-start: PARS(newParameter)							# 1 # {} //simple assignment should work because the regs are in the right order in the register file (see calling convention)
+start: PARS(newParameter, start)					# 1 # {} //simple assignment should work because the regs are in the right order in the register file (see calling convention)
 start: PARS_LAST(lastParameter)						# 1 # {}
 
 assignVariable: VARIABLE							# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
 assignArray: 	ARRAY_ASSIGN(start, start)			# 1 # {calculateArrayAddress(bnode);}
 
-newParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str);}
-lastParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str); fixParameterArrangement();}
+newParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str); parameterCount++;}
+lastParameter: VARIABLE								# 1	# {bnode->regName = newVariableAndGetRegister(bnode->str); parameterCount++; fixParameterArrangement(0, parameterCount);}
 %%
 
 extern treenode *root;

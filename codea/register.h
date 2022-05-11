@@ -24,7 +24,7 @@ char* newVariableAndGetRegister(char* variableName);
 char* getRegisterByVariable(char* variableName);
 void freeRegisterIfNotVariable(char* name);
 void freeAllRegister();
-void fixParameterArrangement();
+void fixParameterArrangement(long start, long num);
 void printRegisterDebug();
 
 #endif

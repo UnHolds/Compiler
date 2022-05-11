@@ -60,7 +60,7 @@ extern void invoke_burm(NODEPTR_TYPE root);
 @attributes {struct list * s_labels;} labeldef
 @attributes {struct list * s_labels; struct list * i_labels; struct list * i_variables; struct list * s_variables;} stats
 @attributes {struct list * i_labels; struct list * i_variables; struct list * s_variables;} stat
-@attributes {struct list * s_variables;} pars
+@attributes {struct list * s_variables; struct s_node *node;} pars
 @attributes {struct list * i_variables;} multi_expr
 @attributes {struct list * i_variables; struct s_node *node;} term expr expr_plus expr_times expr_and lexpr
 
@@ -91,6 +91,8 @@ def:    T_ID T_ROUND_BRACKET_OPENED pars T_ROUND_BRACKET_CLOSED stats end
             treenode* t = newOperatorNode(FUNCTION, NULL, NULL);
             t->str = @T_ID.str@;
             invoke_burm(t);
+
+            invoke_burm(@pars.node@);
         }
 
     @}
@@ -127,22 +129,14 @@ pars: T_ID
     @{
         @i @pars.s_variables@ = add_string(@T_ID.str@, new_string_list());
 
-        @codegen {
-            treenode* vart = newVariableNode(@T_ID.str@);
-            treenode* t = newOperatorNode(PARS_LAST, vart, NULL);
-            invoke_burm(t);
-        }
+        @i @pars.node@ = newOperatorNode(PARS_LAST, newVariableNode(@T_ID.str@), NULL);
     @}
     | pars T_COMMA T_ID
     @{
         @i @pars.0.s_variables@ = add_string(@T_ID.str@, @pars.1.s_variables@);
         @LRpost find_variable_duplicates(@pars.0.s_variables@);
 
-        @codegen {
-            treenode* vart = newVariableNode(@T_ID.str@);
-            treenode* t = newOperatorNode(PARS, vart, NULL);
-            invoke_burm(t);
-        }
+        @i @pars.0.node@ = newOperatorNode(PARS, newVariableNode(@T_ID.str@), @pars.1.node@);
     @}
 ;
 
