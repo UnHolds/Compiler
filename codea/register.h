@@ -9,10 +9,13 @@
 #include <string.h>
 
 
+#define NUM_REGISTER 12
+
+
 typedef struct Register {
-    char* name[12];
-	char* variable[12];
-    bool free[12];
+    char* name[NUM_REGISTER];
+	char* variable[NUM_REGISTER];
+    bool free[NUM_REGISTER];
 } Register;
 
 
