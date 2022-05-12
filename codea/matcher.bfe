@@ -112,7 +112,7 @@ start: PARS(start, newParameter)					# 1 # {} //simple assignment should work be
 start: PARS_LAST(lastParameter)						# 1 # {}
 start: PARS_2OD(start, pars_2od)					# 1 # {freeRegisterIfNotVariable(parameter2odMemoryAddressRegister);} //load values into get registers
 start: PARS_2OD_ADDRESS								# 1 # {parameter2odMemoryAddressRegister = getRegister();} //parameter count must be increased, because the addr is a parameter
-start: FIRST_ORDER									# 1	# {printf("stufe 11 wub wub\n");}
+start: FIRST_ORDER									# 1	# {printf("\tmov %s, (%r15)\n", bnode->str);}
 
 
 assignVariable: VARIABLE							# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
