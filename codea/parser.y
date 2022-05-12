@@ -395,7 +395,7 @@ term: T_ROUND_BRACKET_OPENED expr T_ROUND_BRACKET_CLOSED
     @}
     | T_ID T_CURLY_BRACKET_OPENED multi_expr T_CURLY_BRACKET_CLOSED //stufe 1
     @{
-        @i @term.node@ = newOperatorNode(0, NULL, NULL); //PLACEHOLDER change in codeB
+        @i @term.node@ = newOperatorNode(FIRST_ORDER, NULL, NULL); //PLACEHOLDER change in codeB
         @i @multi_expr.i_variables@ = @term.i_variables@;
     @}
     | term T_AT T_ROUND_BRACKET_OPENED multi_expr T_ROUND_BRACKET_CLOSED //stufe 2

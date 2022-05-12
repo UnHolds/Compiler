@@ -66,16 +66,29 @@ void loadParameterValueFromMemoryIntoRegister(NODEPTR_TYPE bnode){
 }
 
 
+//register r15 is in theory callee saved, but not anymore due to codeb
+void saveCalleeSavedRegisters(){
+	printf("\tpush %%r12\n");
+	printf("\tpush %%r13\n");
+	printf("\tpush %%r14\n");
+}
+
+void restoreCalleeSavedRegisters(){
+	printf("\tpop %%r14\n");
+	printf("\tpop %%r13\n");
+	printf("\tpop %%r12\n");
+}
+
 %}
 
-%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22 PARS_LAST=23 PARS_2OD=24 PARS_2OD_ADDRESS=25
+%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22 PARS_LAST=23 PARS_2OD=24 PARS_2OD_ADDRESS=25 FIRST_ORDER=26
 %start start
 %%
 
 start: INIT											# 1 # {printf("\t.file\t\"codea.s\"\n\t.text\n");}
-start: FUNCTION										# 1 # {printf("\t.globl\t%s\n\t.type\t%s, @function\n%s:\n.LFB%ld:\n\t.cfi_startproc\n", bnode->str, bnode->str, bnode->str, functionNum); currentFunctionName=bnode->str;}
+start: FUNCTION										# 1 # {printf("\t.globl\t%s\n\t.type\t%s, @function\n%s:\n.LFB%ld:\n\t.cfi_startproc\n", bnode->str, bnode->str, bnode->str, functionNum); currentFunctionName=bnode->str; saveCalleeSavedRegisters();}
 start: LABEL										# 1 # {printf("\t_%ld_%s:\n", functionNum, bnode->str);}
-start: FUNCTION_END									# 1 # {printf("\tret\n\t.cfi_endproc\n.LFE%ld:\n\t.size\t%s, .-%s\n",functionNum, currentFunctionName, currentFunctionName); functionNum++; freeAllRegister();}
+start: FUNCTION_END									# 1 # {restoreCalleeSavedRegisters(); printf("\tret\n\t.cfi_endproc\n.LFE%ld:\n\t.size\t%s, .-%s\n",functionNum, currentFunctionName, currentFunctionName); functionNum++; freeAllRegister();}
 start: GOTO											# 1 # {printf("\tjmp _%ld_%s\n", functionNum, bnode->str);}
 start: VARIABLE										# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
 start: NUMBER										# 1 # {bnode->regName = getRegister(); printf("\tmov $%ld, %s\n", bnode->num, bnode->regName);}
@@ -87,7 +100,7 @@ start: TIMES(start, start)							# 1 # {mathOP2(bnode, "imul", 1);}
 start: AND(start, start)							# 1 # {mathOP2(bnode, "and", 0xFFFFFFFFFFFFFFFF);}
 start: GREATER(start, start)						# 1 # {logicOP2(bnode, "setg");} //SETG = set if greater
 start: EQUAL(start, start)							# 1 # {logicOP2(bnode, "sete");} //SETE = set if equal
-start: RETURN(start)								# 1 # {printf("\tmov %s, %%rax\n\tret\n", bnode->kids[0]->regName);}
+start: RETURN(start)								# 1 # {printf("\tmov %s, %%rax\n", bnode->kids[0]->regName); restoreCalleeSavedRegisters(); printf("\tret\n");}
 start: VARIABLE_ASSIGNMENT(assignVariable, start)	# 1 # {printf("\tmov %s, %s\n", bnode->kids[1]->regName, bnode->kids[0]->regName); freeRegisterIfNotVariable(bnode->kids[1]->regName);}
 start: VARIABLE_ASSIGNMENT(assignArray, start)		# 1 # {printf("\tmovq %s, (%s)\n", bnode->kids[1]->regName, bnode->kids[0]->regName); freeRegisterIfNotVariable(bnode->kids[0]->regName); freeRegisterIfNotVariable(bnode->kids[1]->regName);}
 start: VARIABLE_DEFINITION(start)					# 1 # {bnode->regName = newVariableAndGetRegister(bnode->str); printf("\tmov %s, %s\n", bnode->kids[0]->regName, bnode->regName); freeRegisterIfNotVariable(bnode->kids[0]->regName);}
@@ -99,6 +112,8 @@ start: PARS(start, newParameter)					# 1 # {} //simple assignment should work be
 start: PARS_LAST(lastParameter)						# 1 # {}
 start: PARS_2OD(start, pars_2od)					# 1 # {freeRegisterIfNotVariable(parameter2odMemoryAddressRegister);} //load values into get registers
 start: PARS_2OD_ADDRESS								# 1 # {parameter2odMemoryAddressRegister = getRegister();} //parameter count must be increased, because the addr is a parameter
+start: FIRST_ORDER									# 1	# {printf("stufe 11 wub wub\n");}
+
 
 assignVariable: VARIABLE							# 1 # {bnode->regName = getRegisterByVariable(bnode->str);}
 assignArray: 	ARRAY_ASSIGN(start, start)			# 1 # {calculateArrayAddress(bnode);}

@@ -36,6 +36,7 @@ lex.yy.o: lex.yy.c
 
 codea: oxout.tab.o lex.yy.o matcher.o list.o treeOperators.o register.o
 	gcc -o codea oxout.tab.o lex.yy.o list.o matcher.o treeOperators.o register.o -ly -ll -lfl
+	cp codea codeb
 
 clean:
-	rm -rf oxout.* lex.yy.* codea matcher.c matcher.brg *.o
+	rm -rf oxout.* lex.yy.* matcher.c matcher.brg *.o codea codeb
