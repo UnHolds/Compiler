@@ -61,7 +61,7 @@ extern void invoke_burm(NODEPTR_TYPE root);
 @attributes {struct list * s_labels; struct list * i_labels; struct list * i_variables; struct list * s_variables;} stats
 @attributes {struct list * i_labels; struct list * i_variables; struct list * s_variables;} stat
 @attributes {struct list * s_variables; struct s_node *node;} pars
-@attributes {struct list * i_variables;} multi_expr
+@attributes {struct list * i_variables; struct s_node *node;} multi_expr
 @attributes {struct list * i_variables; struct s_node *node;} term expr expr_plus expr_times expr_and lexpr
 
 
@@ -358,9 +358,11 @@ expr: term
 multi_expr: expr
     @{
         @i @expr.i_variables@ = @multi_expr.i_variables@;
+        @i @multi_expr.node@ = newOperatorNode(MULTI_EXPR_LAST, @expr.node@, NULL);
     @}
     | multi_expr T_COMMA expr
     @{
+        @i @multi_expr.0.node@ = newOperatorNode(MULTI_EXPR, @expr.node@, @multi_expr.1.node@);
         @i @multi_expr.1.i_variables@ = @multi_expr.0.i_variables@;
         @i @expr.i_variables@ = @multi_expr.0.i_variables@;
     @}
@@ -395,7 +397,7 @@ term: T_ROUND_BRACKET_OPENED expr T_ROUND_BRACKET_CLOSED
     @}
     | T_ID T_CURLY_BRACKET_OPENED multi_expr T_CURLY_BRACKET_CLOSED //stufe 1
     @{
-        @i {treenode* t = newOperatorNode(FIRST_ORDER, NULL, NULL); @term.node@ = t; t->str = @T_ID.str@;} //PLACEHOLDER change in codeB
+        @i {treenode* t2 = newOperatorNode(FIRST_ORDER_ADDR, NULL, NULL); treenode* t = newOperatorNode(FIRST_ORDER, t2, NULL); @term.node@ = t; t->str = @T_ID.str@; t2->str = @T_ID.str@; t->kids[1] = @multi_expr.node@;} //PLACEHOLDER change in codeB
         @i @multi_expr.i_variables@ = @term.i_variables@;
     @}
     | term T_AT T_ROUND_BRACKET_OPENED multi_expr T_ROUND_BRACKET_CLOSED //stufe 2

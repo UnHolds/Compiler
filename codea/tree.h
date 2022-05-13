@@ -29,6 +29,9 @@
 #define PARS_2OD 24
 #define PARS_2OD_ADDRESS 25
 #define FIRST_ORDER 26
+#define MULTI_EXPR 27
+#define MULTI_EXPR_LAST 28
+#define FIRST_ORDER_ADDR 29
 
 #ifdef USE_IBURG
 #ifndef BURM
