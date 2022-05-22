@@ -392,17 +392,17 @@ term: T_ROUND_BRACKET_OPENED expr T_ROUND_BRACKET_CLOSED
     @}
     | T_ID T_ROUND_BRACKET_OPENED multi_expr T_ROUND_BRACKET_CLOSED //function call
     @{
-        @i @term.node@ = newOperatorNode(0, NULL, NULL); //PLACEHOLDER change in codeB
+        @i @term.node@ = newOperatorNode(0, NULL, NULL); //PLACEHOLDER change in gesamt
         @i @multi_expr.i_variables@ = @term.i_variables@;
     @}
     | T_ID T_CURLY_BRACKET_OPENED multi_expr T_CURLY_BRACKET_CLOSED //stufe 1
     @{
-        @i {treenode* t2 = newOperatorNode(FIRST_ORDER_ADDR, NULL, NULL); treenode* t = newOperatorNode(FIRST_ORDER, t2, NULL); @term.node@ = t; t->str = @T_ID.str@; t2->str = @T_ID.str@; t->kids[1] = @multi_expr.node@;} //PLACEHOLDER change in codeB
+        @i {treenode* t2 = newOperatorNode(FIRST_ORDER_ADDR, NULL, NULL); treenode* t = newOperatorNode(FIRST_ORDER, t2, NULL); @term.node@ = t; t->str = @T_ID.str@; t2->str = @T_ID.str@; t->kids[1] = @multi_expr.node@;}
         @i @multi_expr.i_variables@ = @term.i_variables@;
     @}
     | term T_AT T_ROUND_BRACKET_OPENED multi_expr T_ROUND_BRACKET_CLOSED //stufe 2
     @{
-        @i @term.node@ = newOperatorNode(0, NULL, NULL); //PLACEHOLDER change in codeB
+        @i @term.node@ = newOperatorNode(0, NULL, NULL); //PLACEHOLDER change in gesamt
         @i @term.1.i_variables@ = @term.0.i_variables@;
         @i @multi_expr.i_variables@ = @term.0.i_variables@;
     @}
