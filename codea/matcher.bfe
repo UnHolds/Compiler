@@ -86,7 +86,7 @@ void addToHeap(char* regName){
 
 %}
 
-%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22 PARS_LAST=23 PARS_2OD=24 PARS_2OD_ADDRESS=25 FIRST_ORDER=26 MULTI_EXPR=27 MULTI_EXPR_LAST=28 FIRST_ORDER_ADDR=29
+%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22 PARS_LAST=23 PARS_2OD=24 PARS_2OD_ADDRESS=25 FIRST_ORDER=26 MULTI_EXPR=27 MULTI_EXPR_LAST=28 FIRST_ORDER_ADDR=29 FUNCTION_CALL=30 FUNCTION_CALL_INIT=31
 %start start
 %%
 
@@ -119,8 +119,11 @@ start: PARS_2OD(start, pars_2od)							# 1 # {freeRegisterIfNotVariable(paramete
 start: PARS_2OD_ADDRESS										# 1 # {parameter2odMemoryAddressRegister = getRegister();} //parameter count must be increased, because the addr is a parameter
 start: FIRST_ORDER(start, firstOrderMultiExpr)				# 1	# { bnode->regName = bnode->kids[0]->regName;}
 start: FIRST_ORDER_ADDR										# 1 # {bnode->regName = getRegister(); printf("\tmov %%r15, %s\n", bnode->regName); char* tmpReg = getRegister(); printf("\tlea %s(%%rip), %s\n", bnode->str, tmpReg); addToHeap(tmpReg); freeRegisterIfNotVariable(tmpReg);}
+start: FUNCTION_CALL(start, functionCall)					# 1 # {printf("function call\n");}
+start: FUNCTION_CALL_INIT									# 1 # {printf("function call init\n");}
 
-
+functionCall: MULTI_EXPR(start, functionCall)				# 1 # {printf("multi expr: %s\n", bnode->kids[0]->regName);}
+functionCall: MULTI_EXPR_LAST(start)						# 1 # {printf("last multi expr %s\n", bnode->kids[0]->regName);}
 
 firstOrderMultiExpr: MULTI_EXPR(start, firstOrderMultiExpr)	# 1 # {addToHeap(bnode->kids[0]->regName);}
 firstOrderMultiExpr: MULTI_EXPR_LAST(start)					# 1 # {addToHeap(bnode->kids[0]->regName);}

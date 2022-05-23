@@ -32,6 +32,9 @@
 #define MULTI_EXPR 27
 #define MULTI_EXPR_LAST 28
 #define FIRST_ORDER_ADDR 29
+#define FUNCTION_CALL 30
+#define FUNCTION_CALL_INIT 31
+
 
 #ifdef USE_IBURG
 #ifndef BURM
