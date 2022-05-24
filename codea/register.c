@@ -5,9 +5,32 @@
 Register registers = {
 	.name = {"\%rdi", "\%rsi", "\%rdx", "\%rcx", "\%r8", "\%r9", "\%r10", "\%r11", "\%r12", "\%r13", "\%r14", "\%r15"},
 	.variable = {"\0", "\0", "\0" ,"\0", "\0", "\0", "\0", "\0" ,"\0", "\0", "\0", "\0"},
-	.free = {true, true, true, true, true, true, true, true, true, true, true, true}
+	.free = {true, true, true, true, true, true, true, true, true, true, true, true},
+	.oldRegisters = NULL
 };
 
+
+void createNewRegisters(){
+
+	Register* oldRegisters = malloc(sizeof(struct Register));
+	for(int i = 0; i < NUM_REGISTER; i++){
+		oldRegisters->name[i] = registers.name[i];
+		oldRegisters->variable[i] = registers.variable[i];
+		oldRegisters->free[i] = registers.free[i];
+
+		registers.variable[i] = "\0";
+		registers.free[i] = true;
+	}
+
+	oldRegisters->oldRegisters = registers.oldRegisters;
+
+	registers.oldRegisters = oldRegisters;
+}
+
+void restoreOldRegisters(){
+
+	registers = *(registers.oldRegisters);
+}
 
 char* getRegister(){
 	for(int i = 0; i < NUM_REGISTER; i++){

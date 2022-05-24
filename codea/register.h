@@ -16,6 +16,7 @@ typedef struct Register {
     char* name[NUM_REGISTER];
 	char* variable[NUM_REGISTER];
     bool free[NUM_REGISTER];
+    struct Register* oldRegisters;
 } Register;
 
 
@@ -28,5 +29,7 @@ char* getRegisterByVariable(char* variableName);
 void freeRegisterIfNotVariable(char* name);
 void freeAllRegister();
 void printRegisterDebug();
+void createNewRegisters();
+void restoreOldRegisters();
 
 #endif
