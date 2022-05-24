@@ -392,7 +392,7 @@ term: T_ROUND_BRACKET_OPENED expr T_ROUND_BRACKET_CLOSED
     @}
     | T_ID T_ROUND_BRACKET_OPENED multi_expr T_ROUND_BRACKET_CLOSED //function call
     @{
-        @i @term.node@ = newOperatorNode(FUNCTION_CALL, newOperatorNode(FUNCTION_CALL_INIT, NULL, NULL), @multi_expr.node@);//PLACEHOLDER change in gesamt
+        @i {treenode* t = newOperatorNode(FUNCTION_CALL, NULL, NULL); @term.node@ = t; t->str = @T_ID.str@; t->kids[0] = newOperatorNode(FUNCTION_CALL_INIT, NULL, NULL); t->kids[1] = @multi_expr.node@;}//PLACEHOLDER change in gesamt
         @i @multi_expr.i_variables@ = @term.i_variables@;
     @}
     | T_ID T_CURLY_BRACKET_OPENED multi_expr T_CURLY_BRACKET_CLOSED //stufe 1
