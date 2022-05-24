@@ -114,7 +114,6 @@ void functionCall(NODEPTR_TYPE bnode){
 	createNewRegisters();
 
 	printf("\tcall %s\n", bnode->str);
-	bnode->regName = "\%rax";
 
 	restoreOldRegisters();
 
@@ -126,6 +125,10 @@ void functionCall(NODEPTR_TYPE bnode){
 	printf("\tpop %%rdx\n");
 	printf("\tpop %%rsi\n");
 	printf("\tpop %%rdi\n");
+
+	bnode->regName = getRegister();
+	printf("\tmov %%rax, %s\n", bnode->regName);
+
 
 }
 
@@ -145,8 +148,6 @@ void secondOrderFunctionCall(NODEPTR_TYPE bnode){
 	createNewRegisters();
 	printf("\tcall *%%rax\n");
 
-	bnode->regName = "\%rax";
-
 	restoreOldRegisters();
 
 	printf("\tpop %%r11\n");
@@ -157,6 +158,10 @@ void secondOrderFunctionCall(NODEPTR_TYPE bnode){
 	printf("\tpop %%rdx\n");
 	printf("\tpop %%rsi\n");
 	printf("\tpop %%rdi\n");
+
+
+	bnode->regName = getRegister();
+	printf("\tmov %%rax, %s\n", bnode->regName);
 
 }
 
