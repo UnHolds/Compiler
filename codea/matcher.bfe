@@ -97,6 +97,8 @@ void prepareForFunctionCall(){
 	printf("\tpush %%r10\n");
 	printf("\tpush %%r11\n");
 
+	//TODO maybe i should just save all registers :?
+
 }
 
 
@@ -125,13 +127,43 @@ void functionCall(NODEPTR_TYPE bnode){
 	printf("\tpop %%rsi\n");
 	printf("\tpop %%rdi\n");
 
+}
 
+void secondOrderFunctionCall(NODEPTR_TYPE bnode){
+
+	char* regs[12] = {"\%rdi", "\%rsi", "\%rdx", "\%rcx", "\%r8", "\%r9", "\%r10", "\%r11", "\%r12", "\%r13", "\%r14", "\%r15"};
+
+
+	printf("\tmovq (%s), %%rax\n",bnode->kids[0]->regName);
+	printf("\tmov %s, %s\n", bnode->kids[0]->regName, regs[bnode->kids[1]->num]);
+
+	//pop the right registers (prepare arguments)
+	for(int i = bnode->kids[1]->num - 1; i >= 0; i--){
+		printf("\tpop %s\n", regs[i]);
+	}
+
+	createNewRegisters();
+	printf("\tcall *%%rax\n");
+
+	bnode->regName = "\%rax";
+
+	restoreOldRegisters();
+
+	printf("\tpop %%r11\n");
+	printf("\tpop %%r10\n");
+	printf("\tpop %%r9\n");
+	printf("\tpop %%r8\n");
+	printf("\tpop %%rcx\n");
+	printf("\tpop %%rdx\n");
+	printf("\tpop %%rsi\n");
+	printf("\tpop %%rdi\n");
 
 }
 
+
 %}
 
-%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22 PARS_LAST=23 PARS_2OD=24 PARS_2OD_ADDRESS=25 FIRST_ORDER=26 MULTI_EXPR=27 MULTI_EXPR_LAST=28 FIRST_ORDER_ADDR=29 FUNCTION_CALL=30 FUNCTION_CALL_INIT=31
+%term INIT=0 FUNCTION=1 LABEL=2 FUNCTION_END=3 GOTO=4 VARIABLE=5 NUMBER=6 REGISTER=7 NOT=8 MINUS=9 PLUS=10 TIMES=11 AND=12 GREATER=13 EQUAL=14 RETURN=15 VARIABLE_ASSIGNMENT=16 VARIABLE_DEFINITION=17 TERM_EXECUTION=18 ARRAY_ASSIGN=19 IF=20 ARRAY_ACCESS=21 PARS=22 PARS_LAST=23 PARS_2OD=24 PARS_2OD_ADDRESS=25 FIRST_ORDER=26 MULTI_EXPR=27 MULTI_EXPR_LAST=28 FIRST_ORDER_ADDR=29 FUNCTION_CALL=30 FUNCTION_CALL_INIT=31 SECOND_ORDER_FUNCTION_CALL=32 SECOND_ORDER_FUNCTION_CALL_INIT=33
 %start start
 %%
 
@@ -166,6 +198,8 @@ start: FIRST_ORDER(start, firstOrderMultiExpr)				# 1	# { bnode->regName = bnode
 start: FIRST_ORDER_ADDR										# 1 # {bnode->regName = getRegister(); printf("\tmov %%r15, %s\n", bnode->regName); char* tmpReg = getRegister(); printf("\tlea %s(%%rip), %s\n", bnode->str, tmpReg); addToHeap(tmpReg); freeRegisterIfNotVariable(tmpReg);}
 start: FUNCTION_CALL(start, functionCall)					# 1 # {functionCall(bnode);}
 start: FUNCTION_CALL_INIT									# 1 # {prepareForFunctionCall();}
+start: SECOND_ORDER_FUNCTION_CALL(start, functionCall)		# 1 # {secondOrderFunctionCall(bnode);}
+start: SECOND_ORDER_FUNCTION_CALL_INIT(start)				# 1 # {prepareForFunctionCall(); bnode->regName = bnode->kids[0]->regName;}
 
 functionCall: MULTI_EXPR(start, functionCall)				# 1 # {printf("\tpush %s\n", bnode->kids[0]->regName);  bnode->num = 1 + bnode->kids[1]->num;}
 functionCall: MULTI_EXPR_LAST(start)						# 1 # {printf("\tpush %s\n", bnode->kids[0]->regName); bnode->num = 1;}
@@ -182,6 +216,7 @@ lastParameter: VARIABLE										# 1	# {bnode->regName = newVariableAndGetRegist
 
 pars_2od: PARS(pars_2od, newParameter2OD)					# 1 # {}
 pars_2od: PARS_LAST(lastParameter2OD)						# 1 # {}
+
 
 newParameter2OD: VARIABLE									# 1 # {bnode->regName = newVariableAndGetRegister(bnode->str); loadParameterValueFromMemoryIntoRegister(bnode);}
 lastParameter2OD: VARIABLE									# 1 # {bnode->regName = newVariableAndGetRegister(bnode->str); loadParameterValueFromMemoryIntoRegister(bnode);}

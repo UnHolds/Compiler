@@ -402,7 +402,7 @@ term: T_ROUND_BRACKET_OPENED expr T_ROUND_BRACKET_CLOSED
     @}
     | term T_AT T_ROUND_BRACKET_OPENED multi_expr T_ROUND_BRACKET_CLOSED //stufe 2
     @{
-        @i @term.node@ = newOperatorNode(0, NULL, NULL); //PLACEHOLDER change in gesamt
+        @i {treenode* t = newOperatorNode(SECOND_ORDER_FUNCTION_CALL, NULL, NULL); @term.0.node@ = t; t->kids[0] = newOperatorNode(SECOND_ORDER_FUNCTION_CALL_INIT, @term.1.node@, NULL); t->kids[1] = @multi_expr.node@; } //PLACEHOLDER change in gesamt
         @i @term.1.i_variables@ = @term.0.i_variables@;
         @i @multi_expr.i_variables@ = @term.0.i_variables@;
     @}
